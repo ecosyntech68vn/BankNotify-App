@@ -1,0 +1,200 @@
+package com.banknotify.ui
+
+import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.model.Transaction
+import com.banknotify.core.model.TransactionStatus
+import com.banknotify.databinding.ActivityMainBinding
+import com.banknotify.service.listener.BankNotificationListener
+import com.banknotify.service.server.ApiServerService
+import com.banknotify.ui.adapter.TransactionAdapter
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var b: ActivityMainBinding
+    private lateinit var adapter: TransactionAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        b = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(b.root)
+        setSupportActionBar(b.toolbar)
+        supportActionBar?.title = "BankNotify"
+
+        adapter = TransactionAdapter { tx -> showDetail(tx) }
+        b.recyclerTransactions.layoutManager = LinearLayoutManager(this)
+        b.recyclerTransactions.adapter = adapter
+
+        b.cardPermissions.setOnClickListener { openPermissionSettings() }
+        b.cardWebhook.setOnClickListener { startActivity(android.content.Intent(this, WebhookSettingsActivity::class.java)) }
+        b.cardStats.setOnClickListener { refresh() }
+        b.cardClear.setOnClickListener { showClearDialog() }
+        b.cardUpdate.setOnClickListener { showUpdateDialog() }
+
+        setupSwitches()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus()
+        updateStats()
+        loadRecent()
+    }
+
+    override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {
+        menuInflater.inflate(com.banknotify.R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        return when (item.itemId) {
+            com.banknotify.R.id.action_about -> { showAbout(); true }
+            com.banknotify.R.id.action_api_docs -> { showApiDocs(); true }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun setupSwitches() {
+        b.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (!BankNotificationListener.isNotificationListenerEnabled(this)) {
+                    BankNotificationListener.openNotificationListenerSettings(this)
+                    b.notificationSwitch.isChecked = false
+                }
+            } else {
+                Toast.makeText(this, "Tắt giám sát: vào Cài đặt > Truy cập đặc biệt > Notification Listener", Toast.LENGTH_LONG).show()
+            }
+        }
+        b.serverSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
+            val port = prefs.getInt("server_port", 8765)
+            if (isChecked) {
+                ApiServerService.start(this, port)
+                Toast.makeText(this, "Server đang chạy port $port", Toast.LENGTH_SHORT).show()
+            } else {
+                ApiServerService.stop(this)
+                Toast.makeText(this, "Server đã tắt", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun updateStatus() {
+        val enabled = BankNotificationListener.isNotificationListenerEnabled(this)
+        b.notificationSwitch.isChecked = enabled
+        b.statusText.text = if (enabled) "Đang giám sát" else "Chưa được cấp quyền"
+        b.statusText.setTextColor(
+            if (enabled) androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_green_dark)
+            else androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_red_dark)
+        )
+        val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
+        b.serverPortText.text = "Port: ${prefs.getInt("server_port", 8765)}"
+        b.serverSwitch.isChecked = ApiServerService.isRunning
+    }
+
+    private fun updateStats() {
+        val db = BankNotifyApp.instance.dbHelper
+        b.transactionCount.text = db.getTotalTransactions().toString()
+        b.totalAmount.text = String.format("%,.0f VND", db.getTotalAmount())
+        b.unreadCount.text = db.getUnreadCount().toString()
+    }
+
+    private fun loadRecent() {
+        adapter.submitList(BankNotifyApp.instance.dbHelper.getRecentTransactions(20, 0))
+    }
+
+    private fun refresh() {
+        updateStats()
+        loadRecent()
+        Toast.makeText(this, "Đã làm mới", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showClearDialog() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Xoá dữ liệu")
+            .setMessage("Bạn có chắc muốn xoá tất cả giao dịch?")
+            .setPositiveButton("Xoá") { _, _ ->
+                BankNotifyApp.instance.dbHelper.deleteAllTransactions()
+                refresh()
+                Toast.makeText(this, "Đã xoá", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Huỷ", null).show()
+    }
+
+    private fun showDetail(tx: Transaction) {
+        val detail = """
+            Ngân hàng: ${tx.bankName} (${tx.bankCode})
+            Số TK: ${tx.accountNumber}
+            Số tiền: ${String.format("%,.0f", tx.amount)} VND
+            Người gửi: ${tx.senderName ?: "N/A"}
+            Nội dung: ${tx.content}
+            Mã GD: ${tx.referenceNumber ?: "N/A"}
+            Số dư: ${tx.balance?.let { String.format("%,.0f", it) + " VND" } ?: "N/A"}
+            Thời gian: ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date(tx.transactionDate))}
+            Trạng thái: ${tx.status.name}
+        """.trimIndent()
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Chi tiết giao dịch").setMessage(detail)
+            .setPositiveButton("OK", null)
+            .setNeutralButton("Xác nhận") { _, _ ->
+                BankNotifyApp.instance.dbHelper.updateStatus(tx.id, TransactionStatus.CONFIRMED)
+                refresh()
+                Toast.makeText(this, "Đã xác nhận", Toast.LENGTH_SHORT).show()
+            }.show()
+    }
+
+    private fun showUpdateDialog() {
+        val url = com.banknotify.update.UpdateManager.getUpdateCheckUrl()
+        val input = android.widget.EditText(this).apply { setText(url); hint = "URL kiểm tra cập nhật" }
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Cập nhật phần mềm")
+            .setMessage("Nhập URL server cập nhật (JSON)")
+            .setView(input)
+            .setPositiveButton("Lưu") { _, _ ->
+                com.banknotify.update.UpdateManager.setUpdateCheckUrl(input.text.toString())
+                Toast.makeText(this, "Đã lưu", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Huỷ", null).show()
+    }
+
+    private fun showAbout() {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("BankNotify").setMessage("""
+                Phiên bản: ${BankNotifyApp.instance.appVersion}
+                Ứng dụng đọc thông báo ngân hàng xác thực thanh toán tự động.
+                Hỗ trợ: VCB, TCB, MB, ACB, VPB, TPB, VIB, BIDV, CTG, STB, HDB, OCB, MSB, SHB
+                Cách dùng: 1. Cấp quyền Notification Listener 2. Bật server API 3. Cấu hình webhook
+            """.trimIndent())
+            .setPositiveButton("OK", null).show()
+    }
+
+    private fun showApiDocs() {
+        val port = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE).getInt("server_port", 8765)
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("API Docs").setMessage("""
+                Base: http://<ip>:$port/api/v1
+
+                GET  /health          - Ping
+                GET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset
+                POST /transactions/{id}/confirm
+                GET  /transactions/stats
+                GET  /transactions/unread
+
+                GET/POST  /webhook    - Webhook config
+                POST /webhook/test    - Test webhook
+
+                GET/POST  /config     - Server config
+
+                GET/POST  /update/check  - Check OTA update
+                GET/POST  /update/url    - Update check URL
+            """.trimIndent())
+            .setPositiveButton("OK", null).show()
+    }
+
+    private fun openPermissionSettings() {
+        startActivity(android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+}

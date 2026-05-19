@@ -1,4 +1,4 @@
-package com.banknotify.model
+package com.banknotify.core.model
 
 data class Transaction(
     val id: Long = 0,

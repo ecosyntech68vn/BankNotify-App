@@ -1,13 +1,13 @@
-package com.banknotify.db
+package com.banknotify.core.db
 
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.banknotify.BankNotifyApp
-import com.banknotify.model.Transaction
-import com.banknotify.model.TransactionFilter
-import com.banknotify.model.TransactionStatus
+import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.model.Transaction
+import com.banknotify.core.model.TransactionFilter
+import com.banknotify.core.model.TransactionStatus
 
 class DatabaseHelper(context: android.content.Context) :
     SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
@@ -32,18 +32,10 @@ class DatabaseHelper(context: android.content.Context) :
             )
         """.trimIndent())
 
-        db.execSQL("""
-            CREATE INDEX idx_transactions_bank_code ON $TABLE_TRANSACTIONS($COL_BANK_CODE)
-        """.trimIndent())
-        db.execSQL("""
-            CREATE INDEX idx_transactions_date ON $TABLE_TRANSACTIONS($COL_TRANSACTION_DATE)
-        """.trimIndent())
-        db.execSQL("""
-            CREATE INDEX idx_transactions_status ON $TABLE_TRANSACTIONS($COL_STATUS)
-        """.trimIndent())
-        db.execSQL("""
-            CREATE INDEX idx_transactions_reference ON $TABLE_TRANSACTIONS($COL_REFERENCE_NUMBER)
-        """.trimIndent())
+        db.execSQL("CREATE INDEX idx_transactions_bank_code ON $TABLE_TRANSACTIONS($COL_BANK_CODE)")
+        db.execSQL("CREATE INDEX idx_transactions_date ON $TABLE_TRANSACTIONS($COL_TRANSACTION_DATE)")
+        db.execSQL("CREATE INDEX idx_transactions_status ON $TABLE_TRANSACTIONS($COL_STATUS)")
+        db.execSQL("CREATE INDEX idx_transactions_reference ON $TABLE_TRANSACTIONS($COL_REFERENCE_NUMBER)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -72,11 +64,7 @@ class DatabaseHelper(context: android.content.Context) :
 
     fun getTransaction(id: Long): Transaction? {
         val db = readableDatabase
-        val cursor = db.query(
-            TABLE_TRANSACTIONS, null,
-            "$COL_ID = ?", arrayOf(id.toString()),
-            null, null, null
-        )
+        val cursor = db.query(TABLE_TRANSACTIONS, null, "$COL_ID = ?", arrayOf(id.toString()), null, null, null)
         return cursor.use { if (it.moveToFirst()) cursorToTransaction(it) else null }
     }
 
@@ -85,51 +73,21 @@ class DatabaseHelper(context: android.content.Context) :
         val conditions = mutableListOf<String>()
         val args = mutableListOf<String>()
 
-        filter.bankCode?.let {
-            conditions.add("$COL_BANK_CODE = ?")
-            args.add(it)
-        }
-        filter.status?.let {
-            conditions.add("$COL_STATUS = ?")
-            args.add(it.name)
-        }
-        filter.fromDate?.let {
-            conditions.add("$COL_TRANSACTION_DATE >= ?")
-            args.add(it.toString())
-        }
-        filter.toDate?.let {
-            conditions.add("$COL_TRANSACTION_DATE <= ?")
-            args.add(it.toString())
-        }
-        filter.minAmount?.let {
-            conditions.add("$COL_AMOUNT >= ?")
-            args.add(it.toString())
-        }
-        filter.maxAmount?.let {
-            conditions.add("$COL_AMOUNT <= ?")
-            args.add(it.toString())
-        }
-        filter.searchContent?.let {
-            conditions.add("$COL_CONTENT LIKE ?")
-            args.add("%$it%")
-        }
+        filter.bankCode?.let { conditions.add("$COL_BANK_CODE = ?"); args.add(it) }
+        filter.status?.let { conditions.add("$COL_STATUS = ?"); args.add(it.name) }
+        filter.fromDate?.let { conditions.add("$COL_TRANSACTION_DATE >= ?"); args.add(it.toString()) }
+        filter.toDate?.let { conditions.add("$COL_TRANSACTION_DATE <= ?"); args.add(it.toString()) }
+        filter.minAmount?.let { conditions.add("$COL_AMOUNT >= ?"); args.add(it.toString()) }
+        filter.maxAmount?.let { conditions.add("$COL_AMOUNT <= ?"); args.add(it.toString()) }
+        filter.searchContent?.let { conditions.add("$COL_CONTENT LIKE ?"); args.add("%$it%") }
 
         val where = if (conditions.isNotEmpty()) conditions.joinToString(" AND ") else null
         val whereArgs = if (args.isNotEmpty()) args.toTypedArray() else null
 
-        val cursor = db.query(
-            TABLE_TRANSACTIONS, null,
-            where, whereArgs,
-            null, null,
-            "$COL_TRANSACTION_DATE DESC",
-            "${filter.limit} OFFSET ${filter.offset}"
-        )
-
+        val cursor = db.query(TABLE_TRANSACTIONS, null, where, whereArgs, null, null, "$COL_TRANSACTION_DATE DESC", "${filter.limit} OFFSET ${filter.offset}")
         return cursor.use {
             val result = mutableListOf<Transaction>()
-            while (it.moveToNext()) {
-                result.add(cursorToTransaction(it))
-            }
+            while (it.moveToNext()) result.add(cursorToTransaction(it))
             result
         }
     }
@@ -140,28 +98,19 @@ class DatabaseHelper(context: android.content.Context) :
 
     fun updateStatus(id: Long, status: TransactionStatus): Int {
         val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COL_STATUS, status.name)
-        }
+        val values = ContentValues().apply { put(COL_STATUS, status.name) }
         return db.update(TABLE_TRANSACTIONS, values, "$COL_ID = ?", arrayOf(id.toString()))
     }
 
     fun getTransactionByReference(ref: String): Transaction? {
         val db = readableDatabase
-        val cursor = db.query(
-            TABLE_TRANSACTIONS, null,
-            "$COL_REFERENCE_NUMBER = ?", arrayOf(ref),
-            null, null, null
-        )
+        val cursor = db.query(TABLE_TRANSACTIONS, null, "$COL_REFERENCE_NUMBER = ?", arrayOf(ref), null, null, null)
         return cursor.use { if (it.moveToFirst()) cursorToTransaction(it) else null }
     }
 
     fun getUnreadCount(): Int {
         val db = readableDatabase
-        val cursor = db.rawQuery(
-            "SELECT COUNT(*) FROM $TABLE_TRANSACTIONS WHERE $COL_STATUS = ?",
-            arrayOf(TransactionStatus.PENDING.name)
-        )
+        val cursor = db.rawQuery("SELECT COUNT(*) FROM $TABLE_TRANSACTIONS WHERE $COL_STATUS = ?", arrayOf(TransactionStatus.PENDING.name))
         return cursor.use { if (it.moveToFirst()) it.getInt(0) else 0 }
     }
 
@@ -173,11 +122,13 @@ class DatabaseHelper(context: android.content.Context) :
 
     fun getTotalAmount(): Double {
         val db = readableDatabase
-        val cursor = db.rawQuery(
-            "SELECT COALESCE(SUM($COL_AMOUNT), 0) FROM $TABLE_TRANSACTIONS",
-            null
-        )
+        val cursor = db.rawQuery("SELECT COALESCE(SUM($COL_AMOUNT), 0) FROM $TABLE_TRANSACTIONS", null)
         return cursor.use { if (it.moveToFirst()) it.getDouble(0) else 0.0 }
+    }
+
+    fun deleteAllTransactions(): Int {
+        val db = writableDatabase
+        return db.delete(TABLE_TRANSACTIONS, null, null)
     }
 
     fun deleteTransaction(id: Long): Int {
@@ -192,8 +143,7 @@ class DatabaseHelper(context: android.content.Context) :
             bankName = cursor.getString(cursor.getColumnIndexOrThrow(COL_BANK_NAME)),
             accountNumber = cursor.getString(cursor.getColumnIndexOrThrow(COL_ACCOUNT_NUMBER)),
             amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_AMOUNT)),
-            balance = if (cursor.isNull(cursor.getColumnIndexOrThrow(COL_BALANCE))) null
-                else cursor.getDouble(cursor.getColumnIndexOrThrow(COL_BALANCE)),
+            balance = if (cursor.isNull(cursor.getColumnIndexOrThrow(COL_BALANCE))) null else cursor.getDouble(cursor.getColumnIndexOrThrow(COL_BALANCE)),
             content = cursor.getString(cursor.getColumnIndexOrThrow(COL_CONTENT)),
             senderName = cursor.getString(cursor.getColumnIndexOrThrow(COL_SENDER_NAME)),
             senderAccount = cursor.getString(cursor.getColumnIndexOrThrow(COL_SENDER_ACCOUNT)),

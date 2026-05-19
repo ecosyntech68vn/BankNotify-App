@@ -1,14 +1,13 @@
-package com.banknotify.server
+package com.banknotify.service.server
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.banknotify.BankNotifyApp
+import com.banknotify.core.BankNotifyApp
 
 class ApiServerService : Service() {
 
@@ -30,34 +29,29 @@ class ApiServerService : Service() {
                 startServer(port)
             }
         }
-
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    override fun onBind(intent: Intent?) = null
 
     override fun onDestroy() {
         stopServer()
+        isRunning = false
         super.onDestroy()
     }
 
     private fun startServer(port: Int) {
         try {
             server?.stop()
-            server = ApiServer(port)
-            server?.start()
-            android.util.Log.i(TAG, "API Server started on port $port")
+            server = ApiServer(port).also { it.start() }
+            Log.d(TAG, "Server started on port $port")
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "Failed to start server", e)
+            Log.e(TAG, "Failed to start server", e)
         }
     }
 
     private fun stopServer() {
-        try {
-            server?.stop()
-            server = null
-            android.util.Log.i(TAG, "API Server stopped")
-        } catch (_: Exception) {}
+        try { server?.stop(); server = null } catch (_: Exception) {}
     }
 
     private fun createNotification(): Notification {
@@ -67,10 +61,7 @@ class ApiServerService : Service() {
             .setContentTitle("BankNotify Server")
             .setContentText("API đang chạy tại http://localhost:$port")
             .setStyle(NotificationCompat.BigTextStyle().bigText(
-                "HTTP Server đang chạy\n" +
-                "Port: $port\n" +
-                "API: http://<device_ip>:$port/api"
-            ))
+                "HTTP Server đang chạy\nPort: $port\nAPI: http://<ip>:$port/api/v1/"))
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
@@ -79,26 +70,27 @@ class ApiServerService : Service() {
     companion object {
         private const val TAG = "ApiServerService"
         private const val NOTIFICATION_ID = 1002
+        @Volatile var isRunning = false
 
         fun start(context: Context, port: Int = 8765) {
-            val intent = Intent(context, ApiServerService::class.java).apply {
-                putExtra("port", port)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
+            isRunning = true
+            val intent = Intent(context, ApiServerService::class.java).apply { putExtra("port", port) }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) context.startForegroundService(intent)
+            else context.startService(intent)
         }
 
-        fun stop(context: Context) {
-            context.stopService(Intent(context, ApiServerService::class.java))
-        }
+        fun stop(context: Context) { context.stopService(Intent(context, ApiServerService::class.java)) }
 
         fun restart(port: Int) {
             val ctx = BankNotifyApp.instance
+            isRunning = false
             stop(ctx)
             start(ctx, port)
         }
     }
+}
+
+private object Log {
+    fun d(tag: String, msg: String) = android.util.Log.d(tag, msg)
+    fun e(tag: String, msg: String, e: Exception? = null) = android.util.Log.e(tag, msg, e)
 }

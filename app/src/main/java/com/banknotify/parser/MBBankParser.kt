@@ -1,76 +1,66 @@
 package com.banknotify.parser
 
-import com.banknotify.model.Transaction
+import com.banknotify.core.model.Transaction
+import java.util.regex.Pattern
 
 class MBBankParser : BankParser {
     override val bankCode = "MB"
-    override val bankName = "MB Bank"
+    override val bankName = "MBBank"
     override val packageNames = listOf("com.msb.android", "com.mbbank", "com.mb.mbbank")
 
     override fun parse(title: String, body: String): Transaction? {
         val text = "$title $body"
-        if (!text.contains("MB", ignoreCase = true) && !text.contains("MBBank", ignoreCase = true)
-            && !text.contains("MB Bank", ignoreCase = true)) return null
-
+        if (!text.contains("MB", true) && !text.contains("MBBank", true)) return null
         val amount = extractAmount(text) ?: return null
-        val accountNumber = extractAccountNumber(text)
+        val account = extractAccount(text)
         val content = extractContent(text) ?: ""
-        val senderName = extractSenderName(text)
+        val sender = extractSender(text)
         val balance = extractBalance(text)
-        val referenceNumber = extractReference(text)
-
-        return Transaction(
-            bankCode = bankCode, bankName = bankName,
-            accountNumber = accountNumber ?: "",
-            amount = amount, balance = balance,
-            content = content, senderName = senderName,
-            referenceNumber = referenceNumber,
-            transactionDate = System.currentTimeMillis(),
-            rawMessage = text
-        )
+        val ref = extractReference(text)
+        val date = extractDate(text)
+        return Transaction(bankCode = bankCode, bankName = bankName, accountNumber = account ?: "", amount = amount, balance = balance, content = content, senderName = sender, referenceNumber = ref, transactionDate = date, rawMessage = text)
     }
 
-    private fun extractAmount(text: String): Double? {
-        val p = Regex("""(?:nhận|nhận được|vừa nhận|số tiền)[:\s]*([\d,.]+)\s*VND""", RegexOption.IGNORE_CASE)
-        val m = p.find(text)
-        if (m != null) return parseAmount(m.groupValues[1])
-        val p2 = Regex("""([+-]?[\d,.]+)\s*VND""", RegexOption.IGNORE_CASE)
-        return p2.find(text)?.let { parseAmount(it.groupValues[1]) }
+    private fun extractAmount(t: String): Double? {
+        val p = Regex("""([+-]?[\d,]+(?:\.\d+)?)\s*VND""", RegexOption.IGNORE_CASE)
+        return p.find(t)?.let { parseAmount(it.groupValues[1]) }
     }
 
-    private fun extractAccountNumber(text: String): String? {
-        val p = Regex("""(?:TK|tài khoản)[:\s]*(\d{6,20})""", RegexOption.IGNORE_CASE)
-        return p.find(text)?.groupValues?.get(1)
+    private fun extractAccount(t: String): String? {
+        val p = Regex("""tài[_\s]?khoản[:\s]*(\d{6,20})""", RegexOption.IGNORE_CASE)
+        return p.find(t)?.groupValues?.get(1)
     }
 
-    private fun extractContent(text: String): String? {
-        val patterns = listOf(
-            Regex("""(?:ND|nội dung)[:\s]*([^\n]{1,200})""", RegexOption.IGNORE_CASE),
-            Regex("""nội dung CK[:\s]*([^\n]{1,200})""", RegexOption.IGNORE_CASE)
-        )
-        for (p in patterns) {
-            val m = p.find(text)
-            if (m != null) return m.groupValues[1].trim()
-        }
-        return null
+    private fun extractContent(t: String): String? {
+        val p = Regex("""nội[_\s]?dung[:\s]*([^\n]{1,200})""", RegexOption.IGNORE_CASE)
+        return p.find(t)?.groupValues?.get(1)?.trim()
     }
 
-    private fun extractSenderName(text: String): String? {
-        val p = Regex("""([A-ZÀ-Ỹ][A-ZÀ-Ỹa-zà-ỹ]+(?:\s+[A-ZÀ-Ỹ][A-ZÀ-Ỹa-zà-ỹ]+){1,5})\s*(?:chuyển|ck|chuyển khoản)""", RegexOption.IGNORE_CASE)
-        return p.find(text)?.groupValues?.get(1)
+    private fun extractSender(t: String): String? {
+        val p = Regex("""([A-ZÀ-Ỹ][A-ZÀ-Ỹa-zà-ỹ]+(?:\s+[A-ZÀ-Ỹ][A-ZÀ-Ỹa-zà-ỹ]+){1,5})\s*(?:chuyển|ck|thanh toán)""", RegexOption.IGNORE_CASE)
+        return p.find(t)?.groupValues?.get(1)
     }
 
-    private fun extractBalance(text: String): Double? {
-        val p = Regex("""(?:SD|số dư)[:\s]*([\d,.]+)""", RegexOption.IGNORE_CASE)
-        return p.find(text)?.let { parseAmount(it.groupValues[1]) }
+    private fun extractBalance(t: String): Double? {
+        val p = Regex("""(?:SD|số dư|so du)[:\s]*([+-]?[\d,]+(?:\.\d+)?)\s*VND""", RegexOption.IGNORE_CASE)
+        return p.find(t)?.let { parseAmount(it.groupValues[1]) }
     }
 
-    private fun extractReference(text: String): String? {
-        val p = Regex("""(?:GD|giao dịch|Mã GD)[:\s]*([A-Z0-9]{6,20})""", RegexOption.IGNORE_CASE)
-        return p.find(text)?.groupValues?.get(1)
+    private fun extractReference(t: String): String? {
+        val p = Regex("""(?:GD|giao dịch|MGD)[:\s]*([A-Z0-9]{6,20})""", RegexOption.IGNORE_CASE)
+        return p.find(t)?.groupValues?.get(1)
     }
 
-    private fun parseAmount(s: String): Double {
-        return s.replace("[^\\d.,]".toRegex()).replace(",", "").toDoubleOrNull() ?: 0.0
+    private fun extractDate(t: String): Long {
+        val p = Regex("""(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\s*(\d{1,2})[:\s](\d{2})""")
+        val m = p.find(t)
+        if (m != null) try {
+            val cal = java.util.Calendar.getInstance()
+            cal.set(m.groupValues[3].toInt(), m.groupValues[2].toInt()-1, m.groupValues[1].toInt(), m.groupValues[4].toInt(), m.groupValues[5].toInt())
+            return cal.timeInMillis
+        } catch (_: Exception) {}
+        return System.currentTimeMillis()
     }
+
+    private fun parseAmount(s: String): Double = s.replace("[^\\d.,]".toRegex()).replace(",", "").toDoubleOrNull() ?: 0.0
 }

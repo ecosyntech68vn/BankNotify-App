@@ -1,54 +1,34 @@
 package com.banknotify.parser
 
-import com.banknotify.model.Transaction
+import com.banknotify.core.model.Transaction
 
 object BankParserRegistry {
 
     private val parsers: List<BankParser> = listOf(
-        VietcombankParser(),
-        TechcombankParser(),
-        MBBankParser(),
-        ACBParser(),
-        VPBankParser(),
-        TPBankParser(),
-        VIBParser(),
-        BIDVParser(),
-        VietinBankParser(),
-        SacombankParser(),
-        HDBankParser(),
-        OCBParser(),
-        MSBParser(),
-        SHBParser()
+        VietcombankParser(), TechcombankParser(), MBBankParser(), ACBParser(),
+        VPBankParser(), TPBankParser(), VIBParser(), BIDVParser(),
+        VietinBankParser(), SacombankParser(), HDBankParser(), OCBParser(),
+        MSBParser(), SHBParser()
     )
 
-    private val packageMap: Map<String, BankParser> = parsers.flatMap { parser ->
-        parser.packageNames.map { pkg -> pkg.lowercase() to parser }
+    private val packageMap: Map<String, BankParser> = parsers.flatMap { p ->
+        p.packageNames.map { it.lowercase() to p }
     }.toMap()
 
-    fun getParserForPackage(packageName: String): BankParser? {
-        return packageMap[packageName.lowercase()]
-    }
+    fun getParserForPackage(packageName: String): BankParser? = packageMap[packageName.lowercase()]
 
     fun getAllParsers(): List<BankParser> = parsers
 
     fun parse(packageName: String, title: String, body: String): Transaction? {
-        val parser = getParserForPackage(packageName)
-        if (parser != null) {
-            try {
-                val result = parser.parse(title, body)
-                if (result != null) return result
-            } catch (_: Exception) {}
+        val direct = getParserForPackage(packageName)
+        if (direct != null) {
+            try { direct.parse(title, body)?.let { return it } } catch (_: Exception) {}
         }
-
         for (p in parsers) {
-            try {
-                if (p.packageNames.none { it.lowercase() == packageName.lowercase() }) {
-                    val result = p.parse(title, body)
-                    if (result != null) return result
-                }
-            } catch (_: Exception) {}
+            if (p.packageNames.none { it.lowercase() == packageName.lowercase() }) {
+                try { p.parse(title, body)?.let { return it } } catch (_: Exception) {}
+            }
         }
-
         return null
     }
 }

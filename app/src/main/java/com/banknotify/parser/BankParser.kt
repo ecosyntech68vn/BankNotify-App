@@ -1,6 +1,6 @@
 package com.banknotify.parser
 
-import com.banknotify.model.Transaction
+import com.banknotify.core.model.Transaction
 
 interface BankParser {
     val bankCode: String
