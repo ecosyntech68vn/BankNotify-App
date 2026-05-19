@@ -1,7 +1,6 @@
 package com.banknotify.parser
 
 import com.banknotify.core.model.Transaction
-import java.util.regex.Pattern
 
 class VietcombankParser : BankParser {
     override val bankCode = "VCB"

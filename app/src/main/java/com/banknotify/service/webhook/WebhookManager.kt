@@ -93,7 +93,7 @@ object WebhookManager {
             "bank_name" to tx.bankName,
             "account_number" to tx.accountNumber,
             "amount" to tx.amount,
-            "balance" to (tx.balance ?: 0),
+            "balance" to tx.balance,
             "content" to tx.content,
             "sender_name" to (tx.senderName ?: ""),
             "sender_account" to (tx.senderAccount ?: ""),

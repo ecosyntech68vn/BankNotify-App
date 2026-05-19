@@ -2,7 +2,6 @@ package com.banknotify.update
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.content.FileProvider
@@ -18,7 +17,6 @@ object UpdateManager {
 
     private const val TAG = "UpdateManager"
     private const val PREFS_KEY_CHECK_URL = "update_check_url"
-    private const val PREFS_KEY_DOWNLOAD_DIR = "update_download_dir"
     private const val DEFAULT_CHECK_URL = ""
     private const val DEFAULT_DOWNLOAD_DIR = "updates"
 

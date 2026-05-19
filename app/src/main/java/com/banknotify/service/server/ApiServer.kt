@@ -9,7 +9,6 @@ import com.banknotify.service.webhook.WebhookManager
 import com.banknotify.update.UpdateManager
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import fi.iki.elonen.NanoHTTPD
 import java.io.ByteArrayInputStream
 

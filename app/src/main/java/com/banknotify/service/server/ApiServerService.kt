@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.banknotify.core.BankNotifyApp
 
@@ -88,9 +89,4 @@ class ApiServerService : Service() {
             start(ctx, port)
         }
     }
-}
-
-private object Log {
-    fun d(tag: String, msg: String) = android.util.Log.d(tag, msg)
-    fun e(tag: String, msg: String, e: Exception? = null) = android.util.Log.e(tag, msg, e)
 }

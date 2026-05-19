@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.banknotify.core.BankNotifyApp
 import com.banknotify.databinding.ActivityWebhookBinding
 import com.banknotify.service.webhook.WebhookManager
 
@@ -48,12 +47,10 @@ class WebhookSettingsActivity : AppCompatActivity() {
         if (url.isBlank()) { Toast.makeText(this, "Nhập URL", Toast.LENGTH_SHORT).show(); return }
         Toast.makeText(this, "Đang kiểm tra...", Toast.LENGTH_SHORT).show()
         WebhookManager.testWebhook(url) { success, message ->
-            runOnUiThread {
-                AlertDialog.Builder(this)
-                    .setTitle(if (success) "Thành công" else "Thất bại")
-                    .setMessage(message)
-                    .setPositiveButton("OK", null).show()
-            }
+            AlertDialog.Builder(this)
+                .setTitle(if (success) "Thành công" else "Thất bại")
+                .setMessage(message)
+                .setPositiveButton("OK", null).show()
         }
     }
 
