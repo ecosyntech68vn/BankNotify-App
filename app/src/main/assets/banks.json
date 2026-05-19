@@ -1,0 +1,72 @@
+[
+  {
+    "code": "VCB",
+    "name": "Vietcombank",
+    "packages": ["com.vietcombank", "com.vietcombank.vcb", "vcb.app.com.vcb"]
+  },
+  {
+    "code": "TCB",
+    "name": "Techcombank",
+    "packages": ["com.techcombank", "com.techcombank.techcombankapp", "vn.techcombank"]
+  },
+  {
+    "code": "MB",
+    "name": "MB Bank",
+    "packages": ["com.msb.android", "com.mbbank", "com.mb.mbbank"]
+  },
+  {
+    "code": "ACB",
+    "name": "ACB",
+    "packages": ["com.acb.acb", "vn.acb", "com.acb.app"]
+  },
+  {
+    "code": "VPB",
+    "name": "VPBank",
+    "packages": ["com.vpbank", "vn.vpbank", "com.vpbank.app"]
+  },
+  {
+    "code": "TPB",
+    "name": "TPBank",
+    "packages": ["com.tpbank", "vn.tpbank", "com.tpbank.app"]
+  },
+  {
+    "code": "VIB",
+    "name": "VIB",
+    "packages": ["com.vib", "vn.vib", "com.vib.app"]
+  },
+  {
+    "code": "BIDV",
+    "name": "BIDV",
+    "packages": ["com.bidv", "vn.bidv", "com.bidv.app"]
+  },
+  {
+    "code": "CTG",
+    "name": "VietinBank",
+    "packages": ["com.vietinbank", "vn.vietinbank", "com.vietinbank.app"]
+  },
+  {
+    "code": "STB",
+    "name": "Sacombank",
+    "packages": ["com.sacombank", "vn.sacombank", "com.sacombank.app"]
+  },
+  {
+    "code": "HDB",
+    "name": "HDBank",
+    "packages": ["com.hdbank", "vn.hdbank", "com.hdbank.app"]
+  },
+  {
+    "code": "OCB",
+    "name": "OCB",
+    "packages": ["com.ocb", "vn.ocb", "com.ocb.app", "com.ocb.ocbapp"]
+  },
+  {
+    "code": "MSB",
+    "name": "MSB",
+    "packages": ["com.msb", "vn.msb", "com.msb.app"]
+  },
+  {
+    "code": "SHB",
+    "name": "SHB",
+    "packages": ["com.shb", "vn.shb", "com.shb.app"]
+  }
+]

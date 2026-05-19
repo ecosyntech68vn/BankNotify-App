@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BankNotify</string>
+    <string name="notification_listener_name">BankNotify - Giám sát ngân hàng</string>
+    <string name="notification_listener_description">Cho phép BankNotify đọc thông báo từ ứng dụng ngân hàng để xác thực thanh toán</string>
+</resources>

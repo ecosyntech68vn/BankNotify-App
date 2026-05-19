@@ -1,0 +1,4 @@
+-keepclassmembers class com.banknotify.model.** { *; }
+-keepclassmembers class com.banknotify.** { *; }
+-keep class fi.iki.elonen.** { *; }
+-dontwarn fi.iki.elonen.**
