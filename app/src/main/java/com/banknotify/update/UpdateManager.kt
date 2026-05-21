@@ -126,6 +126,10 @@ object UpdateManager {
     fun installUpdate(apkPath: String): Boolean {
         return try {
             val context = BankNotifyApp.instance
+            if (!ApkVerifier.verifyApk(context, apkPath)) {
+                Log.e(TAG, "APK signature verification failed")
+                return false
+            }
             val apkFile = File(apkPath)
             val uri = FileProvider.getUriForFile(
                 context,
