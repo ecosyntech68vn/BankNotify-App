@@ -29,7 +29,7 @@ object KtorApiServer {
     private const val RATE_WINDOW_MS = 60000L
     private const val TAG = "KtorApiServer"
 
-    private var server: ApplicationEngine? = null
+    private var server: Any? = null
     private val rateMap = mutableMapOf<String, RateEntry>()
     private val gson = GsonBuilder().create()
 
@@ -43,7 +43,7 @@ object KtorApiServer {
     var port: Int = 8765
         private set
 
-    val isRunning: Boolean get() = server != null
+    val isRunning: Boolean get() = server is ApplicationEngine
 
     fun start(
         port: Int,
@@ -60,12 +60,12 @@ object KtorApiServer {
         this.updateManager = updateManager
         this.appConfig = appConfig
         this.appContext = context
-        server = embeddedServer(CIO, port = port) {
+        val eng = embeddedServer(CIO, port = port) {
             install(ContentNegotiation) {
                 gson { setPrettyPrinting() }
             }
             intercept(ApplicationCallPipeline.Call) {
-                val ip = call.request.origin.remoteHost
+                val ip = with(call.request) { origin.remoteHost }
                 if (!checkRate(ip)) {
                     call.respond(HttpStatusCode(429, "Too Many Requests"), mapOf("success" to false, "error" to "Rate limit exceeded"))
                     return@intercept
@@ -82,12 +82,14 @@ object KtorApiServer {
             routing {
                 apiRoutes(dbHelper, webhookManager, updateManager, appConfig, appContext, gson) { this@KtorApiServer.port }
             }
-        }.start(wait = false)
+        }
+        eng.start(wait = false)
+        server = eng
         Log.i(TAG, "Server started on port $port")
     }
 
     fun stop() {
-        server?.stop(1000, 3000)
+        (server as? ApplicationEngine)?.stop(1000, 3000)
         rateMap.clear()
         server = null
         Log.i(TAG, "Server stopped")
