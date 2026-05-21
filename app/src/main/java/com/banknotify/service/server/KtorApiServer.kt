@@ -65,7 +65,7 @@ object KtorApiServer {
                 gson { setPrettyPrinting() }
             }
             intercept(ApplicationCallPipeline.Call) {
-                val ip = call.request.remote.host
+                val ip = call.request.headers["X-Forwarded-For"]?.split(",")?.first()?.trim() ?: call.request.local.host
                 if (!checkRate(ip)) {
                     call.respond(HttpStatusCode(429, "Too Many Requests"), mapOf("success" to false, "error" to "Rate limit exceeded"))
                     return@intercept
