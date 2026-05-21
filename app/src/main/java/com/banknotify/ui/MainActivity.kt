@@ -11,11 +11,17 @@ import com.banknotify.databinding.ActivityMainBinding
 import com.banknotify.service.listener.BankNotificationListener
 import com.banknotify.service.server.ApiServerService
 import com.banknotify.ui.adapter.TransactionAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var b: ActivityMainBinding
     private lateinit var adapter: TransactionAdapter
+
+    @Inject
+    lateinit var dbHelper: com.banknotify.core.db.DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,14 +101,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateStats() {
-        val db = BankNotifyApp.instance.dbHelper
-        b.transactionCount.text = db.getTotalTransactions().toString()
-        b.totalAmount.text = String.format("%,.0f VND", db.getTotalAmount())
-        b.unreadCount.text = db.getUnreadCount().toString()
+        b.transactionCount.text = dbHelper.getTotalTransactions().toString()
+        b.totalAmount.text = String.format("%,.0f VND", dbHelper.getTotalAmount())
+        b.unreadCount.text = dbHelper.getUnreadCount().toString()
     }
 
     private fun loadRecent() {
-        adapter.submitList(BankNotifyApp.instance.dbHelper.getRecentTransactions(20, 0))
+        adapter.submitList(dbHelper.getRecentTransactions(20, 0))
     }
 
     private fun refresh() {
@@ -116,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Xoá dữ liệu")
             .setMessage("Bạn có chắc muốn xoá tất cả giao dịch?")
             .setPositiveButton("Xoá") { _, _ ->
-                BankNotifyApp.instance.dbHelper.deleteAllTransactions()
+                dbHelper.deleteAllTransactions()
                 refresh()
                 Toast.makeText(this, "Đã xoá", Toast.LENGTH_SHORT).show()
             }
@@ -140,7 +145,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Chi tiết giao dịch").setMessage(detail)
             .setPositiveButton("OK", null)
             .setNeutralButton("Xác nhận") { _, _ ->
-                BankNotifyApp.instance.dbHelper.updateStatus(tx.id, TransactionStatus.CONFIRMED)
+                dbHelper.updateStatus(tx.id, TransactionStatus.CONFIRMED)
                 refresh()
                 Toast.makeText(this, "Đã xác nhận", Toast.LENGTH_SHORT).show()
             }.show()

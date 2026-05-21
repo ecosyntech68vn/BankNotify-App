@@ -5,7 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import com.banknotify.core.db.DatabaseHelper
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class BankNotifyApp : Application() {
 
     lateinit var dbHelper: DatabaseHelper

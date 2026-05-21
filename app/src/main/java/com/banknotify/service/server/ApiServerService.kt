@@ -9,7 +9,9 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.banknotify.core.BankNotifyApp
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ApiServerService : Service() {
 
     private var server: ApiServer? = null

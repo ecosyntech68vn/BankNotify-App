@@ -19,8 +19,10 @@ class DatabaseHelperTest {
 
     @Before
     fun setUp() {
-        db = DatabaseHelper(ApplicationProvider.getApplicationContext())
-        db.writableDatabase.execSQL("DELETE FROM ${DatabaseHelper.TABLE_TRANSACTIONS}")
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val appDb = AppDatabase.getInstance(context)
+        appDb.transactionDao().deleteAll()
+        db = DatabaseHelper(context)
     }
 
     private fun createTx(

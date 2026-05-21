@@ -1,19 +1,26 @@
 package com.banknotify.core.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "transactions")
 data class Transaction(
+    @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val bankCode: String,
-    val bankName: String,
-    val accountNumber: String,
+    @ColumnInfo(name = "bank_code") val bankCode: String,
+    @ColumnInfo(name = "bank_name") val bankName: String,
+    @ColumnInfo(name = "account_number") val accountNumber: String,
     val amount: Double,
     val balance: Double? = null,
     val content: String,
-    val senderName: String? = null,
-    val senderAccount: String? = null,
-    val referenceNumber: String? = null,
-    val transactionDate: Long = System.currentTimeMillis(),
-    val rawMessage: String,
-    val status: TransactionStatus = TransactionStatus.PENDING
+    @ColumnInfo(name = "sender_name") val senderName: String? = null,
+    @ColumnInfo(name = "sender_account") val senderAccount: String? = null,
+    @ColumnInfo(name = "reference_number") val referenceNumber: String? = null,
+    @ColumnInfo(name = "transaction_date") val transactionDate: Long = System.currentTimeMillis(),
+    @ColumnInfo(name = "raw_message") val rawMessage: String,
+    val status: TransactionStatus = TransactionStatus.PENDING,
+    @ColumnInfo(name = "created_at") val createdAt: Long = System.currentTimeMillis()
 )
 
 enum class TransactionStatus {

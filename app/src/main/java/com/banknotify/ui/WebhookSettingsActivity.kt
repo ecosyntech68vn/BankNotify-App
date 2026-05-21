@@ -6,7 +6,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.banknotify.databinding.ActivityWebhookBinding
 import com.banknotify.service.webhook.WebhookManager
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class WebhookSettingsActivity : AppCompatActivity() {
 
     private lateinit var b: ActivityWebhookBinding
