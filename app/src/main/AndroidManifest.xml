@@ -24,6 +24,11 @@
         tools:targetApi="34">
 
         <activity
+            android:name=".ui.OnboardingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.BankNotify" />
+
+        <activity
             android:name=".ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTop">

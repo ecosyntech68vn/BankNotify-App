@@ -33,6 +33,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var dbHelper: com.banknotify.core.db.DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (!OnboardingActivity.isDone(this)) {
+            startActivity(android.content.Intent(this, OnboardingActivity::class.java))
+            finish()
+            return
+        }
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
