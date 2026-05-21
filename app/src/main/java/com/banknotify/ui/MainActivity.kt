@@ -14,6 +14,7 @@ import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionStatus
+import com.banknotify.R
 import com.banknotify.databinding.ActivityMainBinding
 import com.banknotify.service.listener.BankNotificationListener
 import com.banknotify.service.server.ApiServerService
