@@ -59,6 +59,15 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+    // To enable Firebase Crashlytics:
+    // 1. Uncomment lines below
+    // 2. Add google-services.json from Firebase Console to app/ directory
+    // 3. Add classpath("com.google.gms:google-services:4.4.0") and
+    //    classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9") to build.gradle.kts (root)
+    // 4. Add id("com.google.gms.google-services") and id("com.google.firebase.crashlytics") to plugins
+    // implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    // implementation("com.google.firebase:firebase-crashlytics-ktx")
+
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.11.1")
     testImplementation("com.google.truth:truth:1.4.2")

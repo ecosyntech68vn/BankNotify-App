@@ -2,6 +2,7 @@ package com.banknotify.ui
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,11 +46,37 @@ class MainActivity : AppCompatActivity() {
 
         setupSwitches()
         observeData()
+        checkCrashes()
     }
 
     override fun onResume() {
         super.onResume()
         updateStatus()
+    }
+
+    private fun checkCrashes() {
+        val crashes = com.banknotify.core.crash.CrashReporter.getPendingCrashReports(this)
+        if (crashes.isEmpty()) return
+        val latest = crashes.first()
+        AlertDialog.Builder(this)
+            .setTitle("Ứng dụng vừa bị lỗi")
+            .setMessage("BankNotify đã gặp lỗi không mong muốn. Bạn có muốn gửi báo cáo lỗi để giúp cải thiện ứng dụng không?")
+            .setPositiveButton("Gửi báo cáo") { _, _ ->
+                com.banknotify.core.crash.CrashReporter.shareCrashReport(this, latest)
+            }
+            .setNeutralButton("Xem chi tiết") { _, _ ->
+                val content = com.banknotify.core.crash.CrashReporter.getCrashContent(latest)
+                AlertDialog.Builder(this)
+                    .setTitle("Chi tiết lỗi")
+                    .setMessage(content)
+                    .setPositiveButton("OK", null)
+                    .setNeutralButton("Gửi") { _, _ ->
+                        com.banknotify.core.crash.CrashReporter.shareCrashReport(this, latest)
+                    }.show()
+            }
+            .setNegativeButton("Bỏ qua") { _, _ ->
+                com.banknotify.core.crash.CrashReporter.deleteCrashReport(latest)
+            }.show()
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {

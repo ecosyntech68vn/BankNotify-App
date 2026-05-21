@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import com.banknotify.core.crash.CrashReporter
 import com.banknotify.core.db.DatabaseHelper
 import dagger.hilt.android.HiltAndroidApp
 
@@ -26,6 +27,7 @@ class BankNotifyApp : Application() {
         appBuild = try {
             packageManager.getPackageInfo(packageName, 0).versionCode
         } catch (_: Exception) { 1 }
+        CrashReporter.init(this, appVersion, appBuild)
         createNotificationChannels()
     }
 
