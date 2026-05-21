@@ -52,7 +52,7 @@ class ApiServerService : Service() {
     }
 
     private fun stopServer() {
-        try { server?.stop(); server = null } catch (_: Exception) {}
+        try { server?.stop(); server = null } catch (e: Exception) { Log.w(TAG, "stopServer", e) }
     }
 
     private fun createNotification(): Notification {

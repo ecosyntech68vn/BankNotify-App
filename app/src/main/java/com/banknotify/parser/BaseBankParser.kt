@@ -70,7 +70,7 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
             val cal = Calendar.getInstance()
             cal.set(m.groupValues[3].toInt(), m.groupValues[2].toInt() - 1, m.groupValues[1].toInt(), m.groupValues[4].toInt(), m.groupValues[5].toInt())
             return cal.timeInMillis
-        } catch (_: Exception) {}
+        } catch (e: Exception) { android.util.Log.w("BaseBankParser", "date parse error", e) }
         return System.currentTimeMillis()
     }
 

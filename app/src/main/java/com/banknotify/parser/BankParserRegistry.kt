@@ -34,11 +34,15 @@ object BankParserRegistry {
     fun parse(packageName: String, title: String, body: String): Transaction? {
         val direct = getParserForPackage(packageName)
         if (direct != null) {
-            try { direct.parse(title, body)?.let { return it } } catch (_: Exception) {}
+            try { direct.parse(title, body)?.let { return it } } catch (e: Exception) {
+                android.util.Log.w("BankParserRegistry", "direct parse error for $packageName", e)
+            }
         }
         for (p in parsers) {
             if (p.packageNames.none { it.lowercase() == packageName.lowercase() }) {
-                try { p.parse(title, body)?.let { return it } } catch (_: Exception) {}
+                try { p.parse(title, body)?.let { return it } } catch (e: Exception) {
+                    android.util.Log.w("BankParserRegistry", "fallback parse error for ${p.bankCode}", e)
+                }
             }
         }
         return null

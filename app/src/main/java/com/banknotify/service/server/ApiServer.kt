@@ -33,6 +33,7 @@ class ApiServer(port: Int) : NanoHTTPD("0.0.0.0", port) {
     private data class RateEntry(var count: Int, val windowStart: Long)
 
     private fun checkRate(ip: String): Boolean {
+        pruneRateMap()
         val now = System.currentTimeMillis()
         val entry = rateMap.getOrPut(ip) { RateEntry(0, now) }
         if (now - entry.windowStart > RATE_WINDOW_MS) {
@@ -41,6 +42,11 @@ class ApiServer(port: Int) : NanoHTTPD("0.0.0.0", port) {
         }
         entry.count++
         return entry.count <= RATE_MAX
+    }
+
+    private fun pruneRateMap() {
+        val cutoff = System.currentTimeMillis() - RATE_WINDOW_MS
+        rateMap.entries.removeIf { it.value.windowStart < cutoff }
     }
 
     private fun checkAuth(headers: Map<String, String>): Boolean {
@@ -114,7 +120,7 @@ class ApiServer(port: Int) : NanoHTTPD("0.0.0.0", port) {
         val p = session.parms ?: emptyMap()
         val filter = TransactionFilter(
             bankCode = p["bank_code"],
-            status = p["status"]?.let { try { TransactionStatus.valueOf(it.uppercase()) } catch (_: Exception) { null } },
+            status = p["status"]?.let { try { TransactionStatus.valueOf(it.uppercase()) } catch (e: Exception) { Log.w(TAG, "Invalid status: ${it}"); null } },
             fromDate = p["from_date"]?.toLongOrNull(),
             toDate = p["to_date"]?.toLongOrNull(),
             minAmount = p["min_amount"]?.toDoubleOrNull(),
@@ -188,7 +194,7 @@ class ApiServer(port: Int) : NanoHTTPD("0.0.0.0", port) {
 
     private fun handleTestWebhook(session: IHTTPSession): Response {
         val body = readBody(session) ?: return error(400, "Empty body")
-        val url = try { (gson.fromJson(body, Map::class.java) as? Map<*, *>)?.get("url") as? String } catch (_: Exception) { null }
+        val url = try { (gson.fromJson(body, Map::class.java) as? Map<*, *>)?.get("url") as? String } catch (e: Exception) { Log.e(TAG, "parse test webhook url", e); null }
         if (url.isNullOrBlank()) return error(400, "Missing url")
         WebhookManager.testWebhook(url) { success, msg -> Log.i(TAG, "Webhook test: $success $msg") }
         return ok("success" to true, "message" to "Test dispatched")
@@ -279,7 +285,7 @@ class ApiServer(port: Int) : NanoHTTPD("0.0.0.0", port) {
             val files = HashMap<String, String>()
             session.parseBody(files)
             files["postData"]
-        } catch (_: Exception) { null }
+        } catch (e: Exception) { Log.e(TAG, "readBody error", e); null }
     }
 
     override fun serveFixedSize(session: IHTTPSession, mimeType: String, file: java.io.InputStream?, filesize: Long): Response? = null
