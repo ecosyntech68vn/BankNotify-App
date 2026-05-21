@@ -54,6 +54,10 @@ kotlin {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.activity:activity-ktx:1.9.3")
@@ -100,10 +104,4 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
 
-androidComponents {
-    onVariants { variant ->
-        variant.sources.java?.srcDir(
-            File(project.buildDir, "generated/aapt_source_out_dir/${variant.name}/out")
-        )
-    }
-}
+
