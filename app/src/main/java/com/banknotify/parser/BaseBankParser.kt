@@ -1,15 +1,17 @@
 package com.banknotify.parser
 
 import com.banknotify.core.model.Transaction
+import java.util.Calendar
 
-class MBBankParser : BankParser {
-    override val bankCode = "MB"
-    override val bankName = "MBBank"
-    override val packageNames = listOf("com.msb.android", "com.mbbank", "com.mb.mbbank")
+class BaseBankParser(private val config: BankParserConfig) : BankParser {
+
+    override val bankCode = config.bankCode
+    override val bankName = config.bankName
+    override val packageNames = config.packageNames
 
     override fun parse(title: String, body: String): Transaction? {
         val text = "$title $body"
-        if (!text.contains("MB", true) && !text.contains("MBBank", true)) return null
+        if (config.identifiers.none { text.contains(it, true) }) return null
         val amount = extractAmount(text) ?: return null
         val account = extractAccount(text)
         val content = extractContent(text) ?: ""
@@ -17,7 +19,18 @@ class MBBankParser : BankParser {
         val balance = extractBalance(text)
         val ref = extractReference(text)
         val date = extractDate(text)
-        return Transaction(bankCode = bankCode, bankName = bankName, accountNumber = account ?: "", amount = amount, balance = balance, content = content, senderName = sender, referenceNumber = ref, transactionDate = date, rawMessage = text)
+        return Transaction(
+            bankCode = bankCode,
+            bankName = bankName,
+            accountNumber = account ?: "",
+            amount = amount,
+            balance = balance,
+            content = content,
+            senderName = sender,
+            referenceNumber = ref,
+            transactionDate = date,
+            rawMessage = text
+        )
     }
 
     private fun extractAmount(t: String): Double? {
@@ -54,12 +67,13 @@ class MBBankParser : BankParser {
         val p = Regex("""(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\s*(\d{1,2})[:\s](\d{2})""")
         val m = p.find(t)
         if (m != null) try {
-            val cal = java.util.Calendar.getInstance()
-            cal.set(m.groupValues[3].toInt(), m.groupValues[2].toInt()-1, m.groupValues[1].toInt(), m.groupValues[4].toInt(), m.groupValues[5].toInt())
+            val cal = Calendar.getInstance()
+            cal.set(m.groupValues[3].toInt(), m.groupValues[2].toInt() - 1, m.groupValues[1].toInt(), m.groupValues[4].toInt(), m.groupValues[5].toInt())
             return cal.timeInMillis
         } catch (_: Exception) {}
         return System.currentTimeMillis()
     }
 
-    private fun parseAmount(s: String): Double = s.replace("[^\\d.,]".toRegex()).replace(",", "").toDoubleOrNull() ?: 0.0
+    private fun parseAmount(s: String): Double? =
+        s.replace("[^\\d.,]".toRegex()).replace(",", "").toDoubleOrNull()
 }
