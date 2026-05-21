@@ -58,7 +58,7 @@
             android:maxLines="2"
             android:ellipsize="end"
             android:text=""
-            android:tools:text="@string/item_content"
+            tools:text="@string/item_content"
             android:textSize="13sp" />
 
         <LinearLayout
