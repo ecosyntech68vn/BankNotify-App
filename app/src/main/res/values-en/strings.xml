@@ -122,12 +122,15 @@
     <string name="api_docs_title">API Docs</string>
     <string name="api_docs_message">Base: http://&lt;ip&gt;:%d/api/v1\n\nGET  /health          - Ping\nGET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset\nPOST /transactions/{id}/confirm\nGET  /transactions/stats\nGET  /transactions/unread\n\nGET/POST  /webhook    - Webhook config\nPOST /webhook/test    - Test webhook\n\nGET/POST  /config     - Server config\n\nGET/POST  /update/check  - Check OTA update\nGET/POST  /update/url    - Update check URL</string>
 
-    <!-- Webhook messages -->
-    <string name="webhook_url_empty">Webhook not configured</string>
-    <string name="webhook_enabled_msg">Webhook enabled → %s</string>
-    <string name="webhook_disabled_msg">Webhook disabled</string>
-    <string name="webhook_url_required">Enter URL</string>
-    <string name="webhook_testing">Testing…</string>
-    <string name="webhook_test_success">Success</string>
-    <string name="webhook_test_fail">Failed</string>
+    <!-- Server notification -->
+    <string name="server_notification_text">API running at http://localhost:%d</string>
+    <string name="server_notification_big">HTTP Server running\nPort: %d\nAPI: http://&lt;ip&gt;:%d/api/v1/</string>
+
+    <!-- Notification channels -->
+    <string name="channel_listener_name">Monitor Service</string>
+    <string name="channel_listener_desc">Notifications for the bank monitoring service</string>
+    <string name="channel_server_name">API Server</string>
+    <string name="channel_server_desc">Notifications for the local API server</string>
+    <string name="channel_transaction_name">Transaction</string>
+    <string name="channel_transaction_desc">Notifications for new transactions</string>
 </resources>

@@ -122,12 +122,15 @@
     <string name="api_docs_title">API 文档</string>
     <string name="api_docs_message">Base: http://&lt;ip&gt;:%d/api/v1\n\nGET  /health          - Ping\nGET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset\nPOST /transactions/{id}/confirm\nGET  /transactions/stats\nGET  /transactions/unread\n\nGET/POST  /webhook    - Webhook config\nPOST /webhook/test    - Test webhook\n\nGET/POST  /config     - Server config\n\nGET/POST  /update/check  - Check OTA update\nGET/POST  /update/url    - Update check URL</string>
 
-    <!-- Webhook messages -->
-    <string name="webhook_url_empty">Webhook 未配置</string>
-    <string name="webhook_enabled_msg">Webhook 已启用 → %s</string>
-    <string name="webhook_disabled_msg">Webhook 已禁用</string>
-    <string name="webhook_url_required">输入 URL</string>
-    <string name="webhook_testing">正在测试…</string>
-    <string name="webhook_test_success">成功</string>
-    <string name="webhook_test_fail">失败</string>
+    <!-- Server notification -->
+    <string name="server_notification_text">API 正在运行于 http://localhost:%d</string>
+    <string name="server_notification_big">HTTP 服务器正在运行\n端口：%d\nAPI：http://&lt;ip&gt;:%d/api/v1/</string>
+
+    <!-- Notification channels -->
+    <string name="channel_listener_name">监控服务</string>
+    <string name="channel_listener_desc">银行监控服务的通知</string>
+    <string name="channel_server_name">API 服务器</string>
+    <string name="channel_server_desc">本地 API 服务器的通知</string>
+    <string name="channel_transaction_name">交易</string>
+    <string name="channel_transaction_desc">新交易的通知</string>
 </resources>

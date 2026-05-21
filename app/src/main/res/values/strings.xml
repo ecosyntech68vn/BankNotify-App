@@ -74,9 +74,6 @@
     <string name="btn_save">Lưu</string>
     <string name="btn_delete">Xoá</string>
     <string name="btn_send">Gửi</string>
-    <string name="btn_grant">Cấp quyền ngay</string>
-    <string name="btn_skip">Đã hiểu, để sau</string>
-
     <!-- Crash dialog -->
     <string name="crash_title">Ứng dụng vừa bị lỗi</string>
     <string name="crash_message">BankNotify đã gặp lỗi không mong muốn. Bạn có muốn gửi báo cáo lỗi để giúp cải thiện ứng dụng không?</string>
@@ -122,12 +119,15 @@
     <string name="api_docs_title">API Docs</string>
     <string name="api_docs_message">Base: http://&lt;ip&gt;:%d/api/v1\n\nGET  /health          - Ping\nGET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset\nPOST /transactions/{id}/confirm\nGET  /transactions/stats\nGET  /transactions/unread\n\nGET/POST  /webhook    - Webhook config\nPOST /webhook/test    - Test webhook\n\nGET/POST  /config     - Server config\n\nGET/POST  /update/check  - Check OTA update\nGET/POST  /update/url    - Update check URL</string>
 
-    <!-- Webhook messages -->
-    <string name="webhook_url_empty">Chưa cấu hình webhook</string>
-    <string name="webhook_enabled_msg">Webhook đang bật → %s</string>
-    <string name="webhook_disabled_msg">Webhook đang tắt</string>
-    <string name="webhook_url_required">Nhập URL</string>
-    <string name="webhook_testing">Đang kiểm tra…</string>
-    <string name="webhook_test_success">Thành công</string>
-    <string name="webhook_test_fail">Thất bại</string>
+    <!-- Server notification -->
+    <string name="server_notification_text">API đang chạy tại http://localhost:%d</string>
+    <string name="server_notification_big">HTTP Server đang chạy\nPort: %d\nAPI: http://&lt;ip&gt;:%d/api/v1/</string>
+
+    <!-- Notification channels -->
+    <string name="channel_listener_name">Dịch vụ giám sát</string>
+    <string name="channel_listener_desc">Thông báo cho dịch vụ giám sát ngân hàng</string>
+    <string name="channel_server_name">Máy chủ API</string>
+    <string name="channel_server_desc">Thông báo cho máy chủ API local</string>
+    <string name="channel_transaction_name">Giao dịch</string>
+    <string name="channel_transaction_desc">Thông báo khi có giao dịch mới</string>
 </resources>

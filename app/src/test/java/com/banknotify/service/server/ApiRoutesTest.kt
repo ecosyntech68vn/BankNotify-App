@@ -20,6 +20,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -54,7 +55,7 @@ class ApiRoutesTest {
 
     private fun TestApplicationBuilder.configureApp() {
         application {
-            install(ContentNegotiation) { gson { setPrettyPrinting() } }
+            install(ContentNegotiation) { gson { } }
             routing {
                 apiRoutes(dbHelper, webhookManager, updateManager, appConfig, context, gson) { 8765 }
             }

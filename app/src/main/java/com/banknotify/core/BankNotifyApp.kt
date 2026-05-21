@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import com.banknotify.R
 import com.banknotify.core.crash.CrashReporter
 import com.banknotify.core.db.DatabaseHelper
 import dagger.hilt.android.HiltAndroidApp
@@ -36,19 +37,19 @@ class BankNotifyApp : Application() {
             val nm = getSystemService(NotificationManager::class.java)
 
             val listenerChannel = NotificationChannel(
-                CHANNEL_LISTENER, "Dịch vụ giám sát",
+                CHANNEL_LISTENER, getString(R.string.channel_listener_name),
                 NotificationManager.IMPORTANCE_LOW
-            ).apply { description = "Thông báo cho dịch vụ giám sát ngân hàng" }
+            ).apply { description = getString(R.string.channel_listener_desc) }
 
             val serverChannel = NotificationChannel(
-                CHANNEL_SERVER, "Máy chủ API",
+                CHANNEL_SERVER, getString(R.string.channel_server_name),
                 NotificationManager.IMPORTANCE_LOW
-            ).apply { description = "Thông báo cho máy chủ API local" }
+            ).apply { description = getString(R.string.channel_server_desc) }
 
             val transactionChannel = NotificationChannel(
-                CHANNEL_TRANSACTION, "Giao dịch",
+                CHANNEL_TRANSACTION, getString(R.string.channel_transaction_name),
                 NotificationManager.IMPORTANCE_HIGH
-            ).apply { description = "Thông báo khi có giao dịch mới" }
+            ).apply { description = getString(R.string.channel_transaction_desc) }
 
             nm.createNotificationChannels(listOf(listenerChannel, serverChannel, transactionChannel))
         }

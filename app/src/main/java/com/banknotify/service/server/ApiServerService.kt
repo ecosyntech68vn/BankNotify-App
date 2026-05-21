@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.banknotify.R
 import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
 import com.banknotify.core.db.DatabaseHelper
@@ -70,9 +71,9 @@ class ApiServerService : Service() {
         return NotificationCompat.Builder(this, BankNotifyApp.CHANNEL_SERVER)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
             .setContentTitle("BankNotify Server")
-            .setContentText("API đang chạy tại http://localhost:$currentPort")
+            .setContentText(getString(R.string.server_notification_text, currentPort))
             .setStyle(NotificationCompat.BigTextStyle().bigText(
-                "HTTP Server đang chạy\nPort: $currentPort\nAPI: http://<ip>:$currentPort/api/v1/"))
+                getString(R.string.server_notification_big, currentPort, currentPort)))
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
