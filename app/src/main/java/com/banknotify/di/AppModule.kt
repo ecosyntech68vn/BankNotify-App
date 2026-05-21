@@ -36,6 +36,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUpdateManager(@ApplicationContext context: android.content.Context): UpdateManager =
-        UpdateManager(context)
+    fun provideUpdateManager(@ApplicationContext context: android.content.Context, appConfig: AppConfig): UpdateManager =
+        UpdateManager(context, appConfig)
 }

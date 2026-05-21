@@ -75,5 +75,5 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
     }
 
     private fun parseAmount(s: String): Double? =
-        s.replace("[^\\d.,]".toRegex()).replace(",", "").toDoubleOrNull()
+        s.replace(Regex("[^\\d.,]"), "").replace(",", "").toDoubleOrNull()
 }

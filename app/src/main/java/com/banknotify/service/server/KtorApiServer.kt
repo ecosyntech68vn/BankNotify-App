@@ -23,7 +23,7 @@ import java.security.MessageDigest
 
 object KtorApiServer {
 
-    private data class RateEntry(var count: Int, val windowStart: Long)
+    private data class RateEntry(var count: Int, var windowStart: Long)
 
     private const val RATE_MAX = 100
     private const val RATE_WINDOW_MS = 60000L
@@ -60,7 +60,29 @@ object KtorApiServer {
         this.updateManager = updateManager
         this.appConfig = appConfig
         this.appContext = context
-        server = embeddedServer(CIO, port = port, module = Application::module).start(wait = false)
+        server = embeddedServer(CIO, port = port) {
+            install(ContentNegotiation) {
+                gson { setPrettyPrinting() }
+            }
+            intercept(ApplicationCallPipeline.Call) {
+                val ip = call.request.origin.remoteHost
+                if (!checkRate(ip)) {
+                    call.respond(HttpStatusCode(429, "Too Many Requests"), mapOf("success" to false, "error" to "Rate limit exceeded"))
+                    return@intercept
+                }
+                if (call.request.httpMethod == HttpMethod.Options) {
+                    call.respond(mapOf("success" to true))
+                    return@intercept
+                }
+                if (!checkAuth(call.request)) {
+                    call.respond(HttpStatusCode(401, "Unauthorized"), mapOf("success" to false, "error" to "Unauthorized"))
+                    return@intercept
+                }
+            }
+            routing {
+                apiRoutes(dbHelper, webhookManager, updateManager, appConfig, appContext, gson) { this@KtorApiServer.port }
+            }
+        }.start(wait = false)
         Log.i(TAG, "Server started on port $port")
     }
 
@@ -69,32 +91,6 @@ object KtorApiServer {
         rateMap.clear()
         server = null
         Log.i(TAG, "Server stopped")
-    }
-
-    private fun Application.module() {
-        install(ContentNegotiation) {
-            gson { setPrettyPrinting() }
-        }
-
-        intercept(ApplicationCallPipeline.Call) {
-            val ip = call.request.origin.remoteHost
-            if (!checkRate(ip)) {
-                call.respond(HttpStatusCode(429, "Too Many Requests"), mapOf("success" to false, "error" to "Rate limit exceeded"))
-                return@intercept
-            }
-            if (call.request.httpMethod == HttpMethod.Options) {
-                call.respond(mapOf("success" to true))
-                return@intercept
-            }
-            if (!checkAuth(call.request)) {
-                call.respond(HttpStatusCode(401, "Unauthorized"), mapOf("success" to false, "error" to "Unauthorized"))
-                return@intercept
-            }
-        }
-
-        routing {
-            apiRoutes(dbHelper, webhookManager, updateManager, appConfig, appContext, gson) { this@KtorApiServer.port }
-        }
     }
 
     private fun checkRate(ip: String): Boolean {

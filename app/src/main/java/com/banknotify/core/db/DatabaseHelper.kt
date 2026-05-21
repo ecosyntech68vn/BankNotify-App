@@ -1,13 +1,14 @@
 package com.banknotify.core.db
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import androidx.paging.PagingSource
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionFilter
 import com.banknotify.core.model.TransactionStatus
 import kotlinx.coroutines.flow.Flow
 
-class DatabaseHelper(context: Context) {
+class DatabaseHelper(private val context: Context) {
 
     private val db = AppDatabase.getInstance(context)
     private val dao = db.transactionDao()
@@ -18,9 +19,12 @@ class DatabaseHelper(context: Context) {
 
     fun getTransactions(filter: TransactionFilter): List<Transaction> {
         val query = buildFilterQuery(filter)
-        val cursor = db.openHelper.writableDatabase.rawQuery(
+        val dbPath = context.getDatabasePath("banknotify.db").path
+        val sqldb = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY)
+        val args = query.args + arrayOf(filter.limit.toString(), filter.offset.toString())
+        val cursor = sqldb.rawQuery(
             "SELECT * FROM transactions ${query.where} ORDER BY transaction_date DESC LIMIT ? OFFSET ?",
-            query.args + filter.limit.toString() + filter.offset.toString()
+            args
         )
         val result = mutableListOf<Transaction>()
         while (cursor.moveToNext()) {
