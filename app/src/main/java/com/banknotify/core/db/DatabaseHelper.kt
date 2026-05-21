@@ -4,6 +4,7 @@ import android.content.Context
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionFilter
 import com.banknotify.core.model.TransactionStatus
+import kotlinx.coroutines.flow.Flow
 
 class DatabaseHelper(context: Context) {
 
@@ -30,6 +31,15 @@ class DatabaseHelper(context: Context) {
 
     fun getRecentTransactions(limit: Int = 20, offset: Int = 0): List<Transaction> =
         dao.getRecent(limit, offset)
+
+    fun observeTransactions(limit: Int = 20, offset: Int = 0): Flow<List<Transaction>> =
+        dao.observeRecent(limit, offset)
+
+    fun observeUnreadCount(): Flow<Int> = dao.observeUnreadCount()
+
+    fun observeTotalCount(): Flow<Int> = dao.observeTotalCount()
+
+    fun observeTotalAmount(): Flow<Double> = dao.observeTotalAmount()
 
     fun updateStatus(id: Long, status: TransactionStatus) = dao.updateStatus(id, status)
 

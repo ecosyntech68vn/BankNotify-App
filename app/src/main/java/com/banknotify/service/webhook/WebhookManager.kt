@@ -8,11 +8,13 @@ import android.util.Log
 import com.banknotify.core.BankNotifyApp
 import com.banknotify.core.model.Transaction
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
-import java.security.MessageDigest
-import java.util.concurrent.Executors
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -24,7 +26,7 @@ object WebhookManager {
     private const val KEY_RETRY = "webhook_retry_count"
     private const val DEFAULT_RETRY = 3
 
-    private val executor = Executors.newSingleThreadExecutor()
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val gson = Gson()
     private val handler = Handler(Looper.getMainLooper())
     private val TAG = "WebhookManager"
@@ -56,7 +58,7 @@ object WebhookManager {
             return
         }
         val payload = buildPayload(transaction)
-        executor.execute { sendWithRetry(webhookUrl, payload, retryCount) }
+        scope.launch { sendWithRetry(webhookUrl, payload, retryCount) }
     }
 
     fun testWebhook(url: String, callback: (Boolean, String) -> Unit) {
@@ -64,7 +66,7 @@ object WebhookManager {
             handler.post { callback(false, "Invalid URL. Must be http:// or https://") }
             return
         }
-        executor.execute {
+        scope.launch {
             try {
                 val conn = URL(url).openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"

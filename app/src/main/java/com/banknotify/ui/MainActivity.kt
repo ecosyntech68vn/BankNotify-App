@@ -3,6 +3,7 @@ package com.banknotify.ui
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banknotify.core.BankNotifyApp
 import com.banknotify.core.model.Transaction
@@ -12,6 +13,8 @@ import com.banknotify.service.listener.BankNotificationListener
 import com.banknotify.service.server.ApiServerService
 import com.banknotify.ui.adapter.TransactionAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,13 +44,12 @@ class MainActivity : AppCompatActivity() {
         b.cardUpdate.setOnClickListener { showUpdateDialog() }
 
         setupSwitches()
+        observeData()
     }
 
     override fun onResume() {
         super.onResume()
         updateStatus()
-        updateStats()
-        loadRecent()
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {
@@ -60,6 +62,24 @@ class MainActivity : AppCompatActivity() {
             com.banknotify.R.id.action_about -> { showAbout(); true }
             com.banknotify.R.id.action_api_docs -> { showApiDocs(); true }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun observeData() {
+        lifecycleScope.launch {
+            combine(
+                dbHelper.observeTransactions(20, 0),
+                dbHelper.observeTotalCount(),
+                dbHelper.observeTotalAmount(),
+                dbHelper.observeUnreadCount()
+            ) { txs, count, amount, unread ->
+                StatsData(txs, count, amount, unread)
+            }.collect { data ->
+                adapter.submitList(data.transactions)
+                b.transactionCount.text = data.totalCount.toString()
+                b.totalAmount.text = String.format("%,.0f VND", data.totalAmount)
+                b.unreadCount.text = data.unreadCount.toString()
+            }
         }
     }
 
@@ -100,19 +120,7 @@ class MainActivity : AppCompatActivity() {
         b.serverSwitch.isChecked = ApiServerService.isRunning
     }
 
-    private fun updateStats() {
-        b.transactionCount.text = dbHelper.getTotalTransactions().toString()
-        b.totalAmount.text = String.format("%,.0f VND", dbHelper.getTotalAmount())
-        b.unreadCount.text = dbHelper.getUnreadCount().toString()
-    }
-
-    private fun loadRecent() {
-        adapter.submitList(dbHelper.getRecentTransactions(20, 0))
-    }
-
     private fun refresh() {
-        updateStats()
-        loadRecent()
         Toast.makeText(this, "Đã làm mới", Toast.LENGTH_SHORT).show()
     }
 
@@ -122,7 +130,6 @@ class MainActivity : AppCompatActivity() {
             .setMessage("Bạn có chắc muốn xoá tất cả giao dịch?")
             .setPositiveButton("Xoá") { _, _ ->
                 dbHelper.deleteAllTransactions()
-                refresh()
                 Toast.makeText(this, "Đã xoá", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Huỷ", null).show()
@@ -146,7 +153,6 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("OK", null)
             .setNeutralButton("Xác nhận") { _, _ ->
                 dbHelper.updateStatus(tx.id, TransactionStatus.CONFIRMED)
-                refresh()
                 Toast.makeText(this, "Đã xác nhận", Toast.LENGTH_SHORT).show()
             }.show()
     }
@@ -177,7 +183,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showApiDocs() {
-        val port = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE).getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
+        val port = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
+            .getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("API Docs").setMessage("""
                 Base: http://<ip>:$port/api/v1
@@ -202,4 +209,11 @@ class MainActivity : AppCompatActivity() {
     private fun openPermissionSettings() {
         startActivity(android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
     }
+
+    private data class StatsData(
+        val transactions: List<Transaction>,
+        val totalCount: Int,
+        val totalAmount: Double,
+        val unreadCount: Int
+    )
 }

@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionStatus
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TransactionDao {
@@ -18,6 +19,18 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY transaction_date DESC LIMIT :limit OFFSET :offset")
     fun getRecent(limit: Int, offset: Int): List<Transaction>
+
+    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC LIMIT :limit OFFSET :offset")
+    fun observeRecent(limit: Int, offset: Int): Flow<List<Transaction>>
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE status = 'PENDING'")
+    fun observeUnreadCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM transactions")
+    fun observeTotalCount(): Flow<Int>
+
+    @Query("SELECT COALESCE(SUM(amount), 0) FROM transactions")
+    fun observeTotalAmount(): Flow<Double>
 
     @Query("UPDATE transactions SET status = :status WHERE id = :id")
     fun updateStatus(id: Long, status: TransactionStatus)

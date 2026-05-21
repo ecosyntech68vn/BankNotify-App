@@ -7,11 +7,14 @@ import android.util.Log
 import androidx.core.content.FileProvider
 import com.banknotify.core.BankNotifyApp
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.concurrent.Executors
 
 object UpdateManager {
 
@@ -20,7 +23,7 @@ object UpdateManager {
     private const val DEFAULT_CHECK_URL = ""
     private const val DEFAULT_DOWNLOAD_DIR = "updates"
 
-    private val executor = Executors.newSingleThreadExecutor()
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val gson = Gson()
 
     private val prefs by lazy {
@@ -38,7 +41,7 @@ object UpdateManager {
             return
         }
 
-        executor.execute {
+        scope.launch {
             try {
                 val app = BankNotifyApp.instance
                 val request = UpdateCheckRequest(
@@ -77,7 +80,7 @@ object UpdateManager {
     }
 
     fun downloadUpdate(updateInfo: UpdateInfo, progress: (Int) -> Unit, callback: (Boolean, String) -> Unit) {
-        executor.execute {
+        scope.launch {
             try {
                 val dir = File(BankNotifyApp.instance.cacheDir, DEFAULT_DOWNLOAD_DIR)
                 dir.mkdirs()
