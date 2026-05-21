@@ -2,6 +2,7 @@ package com.banknotify.ui
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.banknotify.databinding.ActivityWebhookBinding
@@ -14,6 +15,7 @@ class WebhookSettingsActivity : AppCompatActivity() {
     private lateinit var b: ActivityWebhookBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         b = ActivityWebhookBinding.inflate(layoutInflater)
         setContentView(b.root)

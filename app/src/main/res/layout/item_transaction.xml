@@ -72,7 +72,7 @@
                 android:layout_weight="1"
                 android:text="Người gửi"
                 android:textSize="12sp"
-                android:textColor="#666666" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
             <TextView
                 android:id="@+id/item_time"
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:text="14:30 15/05"
                 android:textSize="12sp"
-                android:textColor="#999999" />
+                android:textColor="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
     </LinearLayout>

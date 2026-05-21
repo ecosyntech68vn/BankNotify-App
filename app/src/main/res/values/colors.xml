@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">#1565C0</color>
-    <color name="primary_dark">#0D47A1</color>
-    <color name="primary_light">#42A5F5</color>
-    <color name="accent">#FF6F00</color>
-    <color name="background">#F5F5F5</color>
-    <color name="surface">#FFFFFF</color>
     <color name="on_primary">#FFFFFF</color>
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
+    <color name="primary_container">#D1E4FF</color>
+    <color name="on_primary_container">#001D36</color>
+
+    <color name="secondary">#FF6F00</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="secondary_container">#FFDCC3</color>
+    <color name="on_secondary_container">#2C1600</color>
+
+    <color name="tertiary">#006B5E</color>
+    <color name="on_tertiary">#FFFFFF</color>
+    <color name="tertiary_container">#74F8E1</color>
+    <color name="on_tertiary_container">#00201B</color>
+
+    <color name="surface">#FFFBFE</color>
+    <color name="on_surface">#1C1B1F</color>
+    <color name="surface_variant">#E0E3E7</color>
+    <color name="on_surface_variant">#44474F</color>
+
+    <color name="background">#FFFBFE</color>
+    <color name="on_background">#1C1B1F</color>
+
+    <color name="error">#BA1A1A</color>
+    <color name="on_error">#FFFFFF</color>
+
+    <color name="outline">#74777F</color>
+    <color name="outline_variant">#C4C6D0</color>
+
     <color name="success">#2E7D32</color>
     <color name="warning">#F57F17</color>
-    <color name="error">#C62828</color>
 </resources>
