@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chào mừng đến với BankNotify"
+            android:text="@string/onboarding_welcome"
             android:textAlignment="center"
             android:textSize="24sp"
             android:textStyle="bold" />
@@ -30,7 +30,7 @@
             android:layout_marginTop="12dp"
             android:gravity="center"
             android:lineSpacingExtra="4dp"
-            android:text="BankNotify giúp bạn tự động đọc thông báo chuyển tiền từ các ngân hàng và gửi qua webhook/API."
+            android:text="@string/onboarding_desc"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="15sp" />
 
@@ -52,7 +52,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bước 1: Cấp quyền Truy cập thông báo"
+                    android:text="@string/onboarding_step1_title"
                     android:textColor="?attr/colorOnPrimaryContainer"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -61,7 +61,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Vào Cài đặt &gt; Truy cập đặc biệt &gt; Notification Listener và bật BankNotify."
+                    android:text="@string/onboarding_step1_desc"
                     android:textColor="?attr/colorOnPrimaryContainer"
                     android:textSize="13sp" />
 
@@ -86,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bước 2: Bật máy chủ API"
+                    android:text="@string/onboarding_step2_title"
                     android:textColor="?attr/colorOnSecondaryContainer"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -95,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Bật công tắc server trong ứng dụng để nhận dữ liệu qua API."
+                    android:text="@string/onboarding_step2_desc"
                     android:textColor="?attr/colorOnSecondaryContainer"
                     android:textSize="13sp" />
 
@@ -107,7 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="32dp"
-            android:text="Cấp quyền ngay" />
+            android:text="@string/onboarding_grant" />
 
         <Button
             android:id="@+id/btn_skip"
@@ -115,7 +115,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="@android:color/transparent"
-            android:text="Đã hiểu, để sau"
+            android:text="@string/onboarding_skip"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
     </LinearLayout>

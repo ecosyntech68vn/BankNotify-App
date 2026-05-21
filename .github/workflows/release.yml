@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v3
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "${{ runner.temp }}/keystore.jks"
+
+      - name: Build signed release APK
+        run: ./gradlew assembleRelease
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Generate checksums
+        run: |
+          cd app/build/outputs/apk/release
+          sha256sum *.apk > checksums.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: BankNotify ${{ github.ref_name }}
+          body: |
+            ## BankNotify ${{ github.ref_name }}
+
+            ### Installation
+            1. Download the APK below
+            2. Enable "Install from unknown sources" on your device
+            3. Open the downloaded APK to install
+
+            ### Checksums (SHA-256)
+            See `checksums.txt` in assets for verification.
+          files: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/release/checksums.txt

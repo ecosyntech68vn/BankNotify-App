@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
         setSupportActionBar(b.toolbar)
-        supportActionBar?.title = "BankNotify"
+        supportActionBar?.title = getString(R.string.app_name)
 
         adapter = TransactionAdapter { tx -> showDetail(tx) }
         b.recyclerTransactions.layoutManager = LinearLayoutManager(this)
@@ -77,22 +77,22 @@ class MainActivity : AppCompatActivity() {
         if (crashes.isEmpty()) return
         val latest = crashes.first()
         AlertDialog.Builder(this)
-            .setTitle("Ứng dụng vừa bị lỗi")
-            .setMessage("BankNotify đã gặp lỗi không mong muốn. Bạn có muốn gửi báo cáo lỗi để giúp cải thiện ứng dụng không?")
-            .setPositiveButton("Gửi báo cáo") { _, _ ->
+            .setTitle(getString(R.string.crash_title))
+            .setMessage(getString(R.string.crash_message))
+            .setPositiveButton(getString(R.string.btn_report)) { _, _ ->
                 com.banknotify.core.crash.CrashReporter.shareCrashReport(this, latest)
             }
-            .setNeutralButton("Xem chi tiết") { _, _ ->
+            .setNeutralButton(getString(R.string.btn_details)) { _, _ ->
                 val content = com.banknotify.core.crash.CrashReporter.getCrashContent(latest)
                 AlertDialog.Builder(this)
-                    .setTitle("Chi tiết lỗi")
+                    .setTitle(getString(R.string.crash_detail_title))
                     .setMessage(content)
-                    .setPositiveButton("OK", null)
-                    .setNeutralButton("Gửi") { _, _ ->
+                    .setPositiveButton(getString(R.string.btn_ok), null)
+                    .setNeutralButton(getString(R.string.btn_send)) { _, _ ->
                         com.banknotify.core.crash.CrashReporter.shareCrashReport(this, latest)
                     }.show()
             }
-            .setNegativeButton("Bỏ qua") { _, _ ->
+            .setNegativeButton(getString(R.string.btn_dismiss)) { _, _ ->
                 com.banknotify.core.crash.CrashReporter.deleteCrashReport(latest)
             }.show()
     }
@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                 StatsData(count, amount, unread)
             }.collect { data ->
                 b.transactionCount.text = data.totalCount.toString()
-                b.totalAmount.text = String.format("%,.0f VND", data.totalAmount)
+                b.totalAmount.text = getString(R.string.item_amount_format, data.totalAmount)
                 b.unreadCount.text = data.unreadCount.toString()
             }
         }
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                     b.notificationSwitch.isChecked = false
                 }
             } else {
-                Toast.makeText(this, "Tắt giám sát: vào Cài đặt > Truy cập đặc biệt > Notification Listener", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.monitor_disabled_hint), Toast.LENGTH_LONG).show()
             }
         }
         b.serverSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -152,10 +152,10 @@ class MainActivity : AppCompatActivity() {
             val port = prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
             if (isChecked) {
                 ApiServerService.start(this, port)
-                Toast.makeText(this, "Server đang chạy port $port", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.server_running, port), Toast.LENGTH_SHORT).show()
             } else {
                 ApiServerService.stop(this)
-                Toast.makeText(this, "Server đã tắt", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.server_stopped), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -163,100 +163,82 @@ class MainActivity : AppCompatActivity() {
     private fun updateStatus() {
         val enabled = BankNotificationListener.isNotificationListenerEnabled(this)
         b.notificationSwitch.isChecked = enabled
-        b.statusText.text = if (enabled) "Đang giám sát" else "Chưa được cấp quyền"
+        b.statusText.text = getString(if (enabled) R.string.monitoring_active else R.string.monitoring_inactive)
         b.statusText.setTextColor(
             if (enabled) androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_green_dark)
             else androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_red_dark)
         )
         val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
-        b.serverPortText.text = "Port: ${prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)}"
+        b.serverPortText.text = getString(R.string.server_port, prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT))
         b.serverSwitch.isChecked = ApiServerService.isRunning
     }
 
     private fun refresh() {
-        Toast.makeText(this, "Đã làm mới", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.refreshed), Toast.LENGTH_SHORT).show()
     }
 
     private fun showClearDialog() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Xoá dữ liệu")
-            .setMessage("Bạn có chắc muốn xoá tất cả giao dịch?")
-            .setPositiveButton("Xoá") { _, _ ->
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.clear_dialog_title))
+            .setMessage(getString(R.string.clear_dialog_message))
+            .setPositiveButton(getString(R.string.btn_delete)) { _, _ ->
                 dbHelper.deleteAllTransactions()
-                Toast.makeText(this, "Đã xoá", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Huỷ", null).show()
+            .setNegativeButton(getString(R.string.btn_cancel), null).show()
     }
 
     private fun showDetail(tx: Transaction) {
-        val detail = """
-            Ngân hàng: ${tx.bankName} (${tx.bankCode})
-            Số TK: ${tx.accountNumber}
-            Số tiền: ${String.format("%,.0f", tx.amount)} VND
-            Người gửi: ${tx.senderName ?: "N/A"}
-            Nội dung: ${tx.content}
-            Mã GD: ${tx.referenceNumber ?: "N/A"}
-            Số dư: ${tx.balance?.let { String.format("%,.0f", it) + " VND" } ?: "N/A"}
-            Thời gian: ${java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date(tx.transactionDate))}
-            Trạng thái: ${tx.status.name}
-        """.trimIndent()
+        val na = getString(R.string.tx_na)
+        val detail = buildString {
+            appendLine("${getString(R.string.item_bank)}: ${tx.bankName} (${tx.bankCode})")
+            appendLine(getString(R.string.tx_amount_label, getString(R.string.item_amount_format, tx.amount)))
+            appendLine(getString(R.string.tx_sender_label, tx.senderName ?: na))
+            appendLine("${getString(R.string.item_content)}: ${tx.content}")
+            appendLine(getString(R.string.tx_ref_label, tx.referenceNumber ?: na))
+            appendLine(getString(R.string.tx_balance_label, tx.balance?.let { getString(R.string.item_amount_format, it) } ?: na))
+            appendLine(getString(R.string.tx_time_label,
+                java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date(tx.transactionDate))))
+            appendLine("${getString(R.string.stats_transactions)}: ${tx.status.name}")
+        }
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Chi tiết giao dịch").setMessage(detail)
-            .setPositiveButton("OK", null)
-            .setNeutralButton("Xác nhận") { _, _ ->
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.tx_detail_title)).setMessage(detail)
+            .setPositiveButton(getString(R.string.btn_ok), null)
+            .setNeutralButton(getString(R.string.tx_confirm)) { _, _ ->
                 dbHelper.updateStatus(tx.id, TransactionStatus.CONFIRMED)
-                Toast.makeText(this, "Đã xác nhận", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.tx_confirmed), Toast.LENGTH_SHORT).show()
             }.show()
     }
 
     private fun showUpdateDialog() {
         val url = updateManager.checkUrl
-        val input = android.widget.EditText(this).apply { setText(url); hint = "URL kiểm tra cập nhật" }
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Cập nhật phần mềm")
-            .setMessage("Nhập URL server cập nhật (JSON)")
+        val input = android.widget.EditText(this).apply { setText(url); hint = getString(R.string.update_url_hint) }
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.update_dialog_title))
+            .setMessage(getString(R.string.update_dialog_message))
             .setView(input)
-            .setPositiveButton("Lưu") { _, _ ->
+            .setPositiveButton(getString(R.string.btn_save)) { _, _ ->
                 updateManager.checkUrl = input.text.toString()
-                Toast.makeText(this, "Đã lưu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Huỷ", null).show()
+            .setNegativeButton(getString(R.string.btn_cancel), null).show()
     }
 
     private fun showAbout() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("BankNotify").setMessage("""
-                Phiên bản: ${appConfig.version}
-                Ứng dụng đọc thông báo ngân hàng xác thực thanh toán tự động.
-                Hỗ trợ: VCB, TCB, MB, ACB, VPB, TPB, VIB, BIDV, CTG, STB, HDB, OCB, MSB, SHB
-                Cách dùng: 1. Cấp quyền Notification Listener 2. Bật server API 3. Cấu hình webhook
-            """.trimIndent())
-            .setPositiveButton("OK", null).show()
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.about_title))
+            .setMessage(getString(R.string.about_message, appConfig.version))
+            .setPositiveButton(getString(R.string.btn_ok), null).show()
     }
 
     private fun showApiDocs() {
         val port = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
             .getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("API Docs").setMessage("""
-                Base: http://<ip>:$port/api/v1
-
-                GET  /health          - Ping
-                GET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset
-                POST /transactions/{id}/confirm
-                GET  /transactions/stats
-                GET  /transactions/unread
-
-                GET/POST  /webhook    - Webhook config
-                POST /webhook/test    - Test webhook
-
-                GET/POST  /config     - Server config
-
-                GET/POST  /update/check  - Check OTA update
-                GET/POST  /update/url    - Update check URL
-            """.trimIndent())
-            .setPositiveButton("OK", null).show()
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.api_docs_title))
+            .setMessage(getString(R.string.api_docs_message, port))
+            .setPositiveButton(getString(R.string.btn_ok), null).show()
     }
 
     private fun openPermissionSettings() {

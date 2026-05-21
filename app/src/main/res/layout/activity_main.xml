@@ -18,7 +18,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="BankNotify" />
+                app:title="@string/app_name" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -52,7 +52,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Giám sát thông báo"
+                            android:text="@string/monitor_title"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -61,7 +61,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Đang kiểm tra..."
+                            android:text="@string/monitor_checking"
                             android:textSize="14sp" />
 
                         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -69,7 +69,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Bật giám sát ngân hàng"
+                            android:text="@string/monitor_switch"
                             android:textSize="14sp" />
 
                     </LinearLayout>
@@ -92,7 +92,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Thống kê"
+                            android:text="@string/stats_title"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -120,7 +120,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Giao dịch"
+                                    android:text="@string/stats_transactions"
                                     android:textSize="12sp" />
                             </LinearLayout>
 
@@ -142,7 +142,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Tổng tiền"
+                                    android:text="@string/stats_total_amount"
                                     android:textSize="12sp" />
                             </LinearLayout>
 
@@ -164,7 +164,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Chưa đọc"
+                                    android:text="@string/stats_unread"
                                     android:textSize="12sp" />
                             </LinearLayout>
 
@@ -200,7 +200,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Máy chủ API"
+                                    android:text="@string/server_title"
                                     android:textSize="16sp"
                                     android:textStyle="bold" />
 
@@ -208,7 +208,7 @@
                                     android:id="@+id/server_port_text"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Port: 8765"
+                                    android:text="@string/server_port"
                                     android:textSize="12sp" />
                             </LinearLayout>
 
@@ -245,21 +245,21 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Webhook"
+                                android:text="@string/webhook_title"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Cấu hình callback khi có giao dịch"
+                                android:text="@string/webhook_subtitle"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cấu hình >"
+                            android:text="@string/webhook_action"
                             android:textColor="@color/primary"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -289,21 +289,21 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Cập nhật phần mềm"
+                                android:text="@string/update_title"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Cấu hình OTA update"
+                                android:text="@string/update_subtitle"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cấu hình >"
+                            android:text="@string/webhook_action"
                             android:textColor="@color/primary"
                             android:textSize="14sp" />
                     </LinearLayout>
@@ -328,7 +328,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Xoá dữ liệu giao dịch"
+                            android:text="@string/clear_title"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -339,7 +339,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Giao dịch gần đây"
+                    android:text="@string/recent_title"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 

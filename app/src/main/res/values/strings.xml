@@ -3,4 +3,131 @@
     <string name="app_name">BankNotify</string>
     <string name="notification_listener_name">BankNotify - Giám sát ngân hàng</string>
     <string name="notification_listener_description">Cho phép BankNotify đọc thông báo từ ứng dụng ngân hàng để xác thực thanh toán</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Chào mừng đến với BankNotify</string>
+    <string name="onboarding_desc">BankNotify giúp bạn tự động đọc thông báo chuyển tiền từ các ngân hàng và gửi qua webhook/API.</string>
+    <string name="onboarding_step1_title">Bước 1: Cấp quyền Truy cập thông báo</string>
+    <string name="onboarding_step1_desc">Vào Cài đặt &gt; Truy cập đặc biệt &gt; Notification Listener và bật BankNotify.</string>
+    <string name="onboarding_step2_title">Bước 2: Bật máy chủ API</string>
+    <string name="onboarding_step2_desc">Bật công tắc server trong ứng dụng để nhận dữ liệu qua API.</string>
+    <string name="onboarding_grant">Cấp quyền ngay</string>
+    <string name="onboarding_skip">Đã hiểu, để sau</string>
+
+    <!-- Monitor card -->
+    <string name="monitor_title">Giám sát thông báo</string>
+    <string name="monitor_checking">Đang kiểm tra…</string>
+    <string name="monitor_switch">Bật giám sát ngân hàng</string>
+
+    <!-- Stats card -->
+    <string name="stats_title">Thống kê</string>
+    <string name="stats_transactions">Giao dịch</string>
+    <string name="stats_total_amount">Tổng tiền</string>
+    <string name="stats_unread">Chưa đọc</string>
+
+    <!-- Server card -->
+    <string name="server_title">Máy chủ API</string>
+    <string name="server_port">Port: %d</string>
+
+    <!-- Webhook card -->
+    <string name="webhook_title">Webhook</string>
+    <string name="webhook_subtitle">Cấu hình callback khi có giao dịch</string>
+    <string name="webhook_action">Cấu hình &gt;</string>
+
+    <!-- Update card -->
+    <string name="update_title">Cập nhật phần mềm</string>
+    <string name="update_subtitle">Cấu hình OTA update</string>
+
+    <!-- Clear data card -->
+    <string name="clear_title">Xoá dữ liệu giao dịch</string>
+
+    <!-- Recent transactions -->
+    <string name="recent_title">Giao dịch gần đây</string>
+
+    <!-- Webhook settings -->
+    <string name="webhook_config_title">Cấu hình Webhook</string>
+    <string name="webhook_not_configured">Chưa cấu hình</string>
+    <string name="webhook_enable">Bật webhook</string>
+    <string name="webhook_url_hint">Webhook URL</string>
+    <string name="webhook_secret_hint">Secret key (tuỳ chọn)</string>
+    <string name="webhook_retry_hint">Số lần thử lại</string>
+    <string name="webhook_test">Kiểm tra</string>
+    <string name="webhook_save">Lưu</string>
+
+    <!-- Transaction item -->
+    <string name="item_bank">Bank</string>
+    <string name="item_content">Nội dung chuyển khoản</string>
+    <string name="item_sender">Người gửi</string>
+    <string name="item_time">14:30 15/05</string>
+    <string name="item_amount_format">+%,.0f VND</string>
+    <string name="item_date_format">dd/MM HH:mm</string>
+
+    <!-- Transaction status -->
+    <string name="status_pending">Mới</string>
+    <string name="status_confirmed">Đã XN</string>
+    <string name="status_expired">Hết hạn</string>
+    <string name="status_failed">Lỗi</string>
+
+    <!-- Dialogs -->
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">Huỷ</string>
+    <string name="btn_save">Lưu</string>
+    <string name="btn_delete">Xoá</string>
+    <string name="btn_send">Gửi</string>
+    <string name="btn_grant">Cấp quyền ngay</string>
+    <string name="btn_skip">Đã hiểu, để sau</string>
+
+    <!-- Crash dialog -->
+    <string name="crash_title">Ứng dụng vừa bị lỗi</string>
+    <string name="crash_message">BankNotify đã gặp lỗi không mong muốn. Bạn có muốn gửi báo cáo lỗi để giúp cải thiện ứng dụng không?</string>
+    <string name="btn_report">Gửi báo cáo</string>
+    <string name="btn_details">Xem chi tiết</string>
+    <string name="crash_detail_title">Chi tiết lỗi</string>
+    <string name="btn_dismiss">Bỏ qua</string>
+
+    <!-- Server messages -->
+    <string name="server_running">Server đang chạy port %d</string>
+    <string name="server_stopped">Server đã tắt</string>
+    <string name="monitoring_active">Đang giám sát</string>
+    <string name="monitoring_inactive">Chưa được cấp quyền</string>
+    <string name="refreshed">Đã làm mới</string>
+    <string name="monitor_disabled_hint">Tắt giám sát: vào Cài đặt &gt; Truy cập đặc biệt &gt; Notification Listener</string>
+
+    <!-- Clear dialog -->
+    <string name="clear_dialog_title">Xoá dữ liệu</string>
+    <string name="clear_dialog_message">Bạn có chắc muốn xoá tất cả giao dịch?</string>
+
+    <!-- Transaction detail -->
+    <string name="tx_detail_title">Chi tiết giao dịch</string>
+    <string name="tx_confirm">Xác nhận</string>
+    <string name="tx_confirmed">Đã xác nhận</string>
+    <string name="tx_amount_label">Số tiền: %s</string>
+    <string name="tx_sender_label">Người gửi: %s</string>
+    <string name="tx_ref_label">Mã GD: %s</string>
+    <string name="tx_balance_label">Số dư: %s</string>
+    <string name="tx_time_label">Thời gian: %s</string>
+    <string name="tx_na">N/A</string>
+
+    <!-- Update dialog -->
+    <string name="update_dialog_title">Cập nhật phần mềm</string>
+    <string name="update_dialog_message">Nhập URL server cập nhật (JSON)</string>
+    <string name="update_url_hint">URL kiểm tra cập nhật</string>
+    <string name="saved">Đã lưu</string>
+
+    <!-- About dialog -->
+    <string name="about_title">Về BankNotify</string>
+    <string name="about_message">BankNotify %s\n\nỨng dụng giám sát thông báo ngân hàng và gửi qua webhook/API.\n\nMã nguồn mở.</string>
+
+    <!-- API docs -->
+    <string name="api_docs_title">API Docs</string>
+    <string name="api_docs_message">Base: http://&lt;ip&gt;:%d/api/v1\n\nGET  /health          - Ping\nGET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset\nPOST /transactions/{id}/confirm\nGET  /transactions/stats\nGET  /transactions/unread\n\nGET/POST  /webhook    - Webhook config\nPOST /webhook/test    - Test webhook\n\nGET/POST  /config     - Server config\n\nGET/POST  /update/check  - Check OTA update\nGET/POST  /update/url    - Update check URL</string>
+
+    <!-- Webhook messages -->
+    <string name="webhook_url_empty">Chưa cấu hình webhook</string>
+    <string name="webhook_enabled_msg">Webhook đang bật → %s</string>
+    <string name="webhook_disabled_msg">Webhook đang tắt</string>
+    <string name="webhook_url_required">Nhập URL</string>
+    <string name="webhook_testing">Đang kiểm tra…</string>
+    <string name="webhook_test_success">Thành công</string>
+    <string name="webhook_test_fail">Thất bại</string>
 </resources>

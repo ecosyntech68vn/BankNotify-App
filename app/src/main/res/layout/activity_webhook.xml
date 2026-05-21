@@ -29,17 +29,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cấu hình Webhook"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                    android:text="@string/webhook_config_title"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/webhook_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Chưa cấu hình"
-                        android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/webhook_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/webhook_not_configured"
+                    android:textSize="14sp" />
 
                     <com.google.android.material.divider.MaterialDivider
                         android:layout_width="match_parent"
@@ -50,14 +50,14 @@
                         android:id="@+id/webhook_enabled"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Bật webhook"
+                        android:text="@string/webhook_enable"
                         android:textSize="16sp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:hint="Webhook URL"
+                        android:hint="@string/webhook_url_hint"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -71,7 +71,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="Secret key (tuỳ chọn)"
+                        android:hint="@string/webhook_secret_hint"
                         app:endIconMode="password_toggle">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -85,7 +85,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="Số lần thử lại">
+                        android:hint="@string/webhook_retry_hint">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/webhook_retry"
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:text="Kiểm tra" />
+                    android:text="@string/webhook_test" />
 
                 <Button
                     android:id="@+id/btn_save"
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:text="Lưu" />
+                    android:text="@string/webhook_save" />
             </LinearLayout>
 
         </LinearLayout>

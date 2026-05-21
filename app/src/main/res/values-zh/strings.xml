@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BankNotify</string>
+    <string name="notification_listener_name">BankNotify - 银行监控</string>
+    <string name="notification_listener_description">允许BankNotify读取银行应用的通知以进行支付验证</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">欢迎使用 BankNotify</string>
+    <string name="onboarding_desc">BankNotify 可自动读取银行转账通知并通过 webhook/API 转发。</string>
+    <string name="onboarding_step1_title">步骤 1：授予通知访问权限</string>
+    <string name="onboarding_step1_desc">进入 设置 &gt; 特殊权限 &gt; 通知监听 并启用 BankNotify。</string>
+    <string name="onboarding_step2_title">步骤 2：启用 API 服务器</string>
+    <string name="onboarding_step2_desc">在应用中打开服务器开关以通过 API 接收数据。</string>
+    <string name="onboarding_grant">立即授权</string>
+    <string name="onboarding_skip">知道了，稍后</string>
+
+    <!-- Monitor card -->
+    <string name="monitor_title">通知监控</string>
+    <string name="monitor_checking">正在检查…</string>
+    <string name="monitor_switch">启用银行监控</string>
+
+    <!-- Stats card -->
+    <string name="stats_title">统计</string>
+    <string name="stats_transactions">交易</string>
+    <string name="stats_total_amount">总金额</string>
+    <string name="stats_unread">未读</string>
+
+    <!-- Server card -->
+    <string name="server_title">API 服务器</string>
+    <string name="server_port">端口：%d</string>
+
+    <!-- Webhook card -->
+    <string name="webhook_title">Webhook</string>
+    <string name="webhook_subtitle">配置新交易的回调</string>
+    <string name="webhook_action">配置 &gt;</string>
+
+    <!-- Update card -->
+    <string name="update_title">软件更新</string>
+    <string name="update_subtitle">配置 OTA 更新</string>
+
+    <!-- Clear data card -->
+    <string name="clear_title">删除交易数据</string>
+
+    <!-- Recent transactions -->
+    <string name="recent_title">最近交易</string>
+
+    <!-- Webhook settings -->
+    <string name="webhook_config_title">Webhook 配置</string>
+    <string name="webhook_not_configured">未配置</string>
+    <string name="webhook_enable">启用 Webhook</string>
+    <string name="webhook_url_hint">Webhook URL</string>
+    <string name="webhook_secret_hint">密钥（可选）</string>
+    <string name="webhook_retry_hint">重试次数</string>
+    <string name="webhook_test">测试</string>
+    <string name="webhook_save">保存</string>
+
+    <!-- Transaction item -->
+    <string name="item_bank">银行</string>
+    <string name="item_content">转账内容</string>
+    <string name="item_sender">发送方</string>
+    <string name="item_time">14:30 15/05</string>
+    <string name="item_amount_format">+%,.0f VND</string>
+    <string name="item_date_format">dd/MM HH:mm</string>
+
+    <!-- Transaction status -->
+    <string name="status_pending">新</string>
+    <string name="status_confirmed">已确认</string>
+    <string name="status_expired">已过期</string>
+    <string name="status_failed">失败</string>
+
+    <!-- Dialogs -->
+    <string name="btn_ok">确定</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_save">保存</string>
+    <string name="btn_delete">删除</string>
+    <string name="btn_send">发送</string>
+    <string name="btn_grant">立即授权</string>
+    <string name="btn_skip">稍后再说</string>
+
+    <!-- Crash dialog -->
+    <string name="crash_title">应用崩溃</string>
+    <string name="crash_message">BankNotify 遇到了意外错误。是否发送崩溃报告以帮助改进应用？</string>
+    <string name="btn_report">发送报告</string>
+    <string name="btn_details">查看详情</string>
+    <string name="crash_detail_title">错误详情</string>
+    <string name="btn_dismiss">忽略</string>
+
+    <!-- Server messages -->
+    <string name="server_running">服务器正在运行，端口 %d</string>
+    <string name="server_stopped">服务器已停止</string>
+    <string name="monitoring_active">监控中</string>
+    <string name="monitoring_inactive">未授权</string>
+    <string name="refreshed">已刷新</string>
+    <string name="monitor_disabled_hint">关闭监控：进入 设置 &gt; 特殊权限 &gt; 通知监听</string>
+
+    <!-- Clear dialog -->
+    <string name="clear_dialog_title">删除数据</string>
+    <string name="clear_dialog_message">确定要删除所有交易吗？</string>
+
+    <!-- Transaction detail -->
+    <string name="tx_detail_title">交易详情</string>
+    <string name="tx_confirm">确认</string>
+    <string name="tx_confirmed">已确认</string>
+    <string name="tx_amount_label">金额：%s</string>
+    <string name="tx_sender_label">发送方：%s</string>
+    <string name="tx_ref_label">参考号：%s</string>
+    <string name="tx_balance_label">余额：%s</string>
+    <string name="tx_time_label">时间：%s</string>
+    <string name="tx_na">无</string>
+
+    <!-- Update dialog -->
+    <string name="update_dialog_title">软件更新</string>
+    <string name="update_dialog_message">输入更新服务器 URL（JSON）</string>
+    <string name="update_url_hint">更新检查 URL</string>
+    <string name="saved">已保存</string>
+
+    <!-- About dialog -->
+    <string name="about_title">关于 BankNotify</string>
+    <string name="about_message">BankNotify %s\n\n银行通知监控应用，通过 webhook/API 转发交易。\n\n开源。</string>
+
+    <!-- API docs -->
+    <string name="api_docs_title">API 文档</string>
+    <string name="api_docs_message">Base: http://&lt;ip&gt;:%d/api/v1\n\nGET  /health          - Ping\nGET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset\nPOST /transactions/{id}/confirm\nGET  /transactions/stats\nGET  /transactions/unread\n\nGET/POST  /webhook    - Webhook config\nPOST /webhook/test    - Test webhook\n\nGET/POST  /config     - Server config\n\nGET/POST  /update/check  - Check OTA update\nGET/POST  /update/url    - Update check URL</string>
+
+    <!-- Webhook messages -->
+    <string name="webhook_url_empty">Webhook 未配置</string>
+    <string name="webhook_enabled_msg">Webhook 已启用 → %s</string>
+    <string name="webhook_disabled_msg">Webhook 已禁用</string>
+    <string name="webhook_url_required">输入 URL</string>
+    <string name="webhook_testing">正在测试…</string>
+    <string name="webhook_test_success">成功</string>
+    <string name="webhook_test_fail">失败</string>
+</resources>

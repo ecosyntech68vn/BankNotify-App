@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BankNotify</string>
+    <string name="notification_listener_name">BankNotify - Bank Monitor</string>
+    <string name="notification_listener_description">Allow BankNotify to read notifications from banking apps for payment verification</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Welcome to BankNotify</string>
+    <string name="onboarding_desc">BankNotify helps you automatically read money transfer notifications from banks and forward them via webhook/API.</string>
+    <string name="onboarding_step1_title">Step 1: Grant Notification Access</string>
+    <string name="onboarding_step1_desc">Go to Settings &gt; Special access &gt; Notification Listener and enable BankNotify.</string>
+    <string name="onboarding_step2_title">Step 2: Enable API Server</string>
+    <string name="onboarding_step2_desc">Toggle the server switch in the app to receive data via API.</string>
+    <string name="onboarding_grant">Grant Permission</string>
+    <string name="onboarding_skip">Got it, later</string>
+
+    <!-- Monitor card -->
+    <string name="monitor_title">Notification Monitor</string>
+    <string name="monitor_checking">Checking…</string>
+    <string name="monitor_switch">Enable bank monitoring</string>
+
+    <!-- Stats card -->
+    <string name="stats_title">Statistics</string>
+    <string name="stats_transactions">Transactions</string>
+    <string name="stats_total_amount">Total Amount</string>
+    <string name="stats_unread">Unread</string>
+
+    <!-- Server card -->
+    <string name="server_title">API Server</string>
+    <string name="server_port">Port: %d</string>
+
+    <!-- Webhook card -->
+    <string name="webhook_title">Webhook</string>
+    <string name="webhook_subtitle">Configure callback for new transactions</string>
+    <string name="webhook_action">Configure &gt;</string>
+
+    <!-- Update card -->
+    <string name="update_title">Software Update</string>
+    <string name="update_subtitle">Configure OTA update</string>
+
+    <!-- Clear data card -->
+    <string name="clear_title">Delete transaction data</string>
+
+    <!-- Recent transactions -->
+    <string name="recent_title">Recent Transactions</string>
+
+    <!-- Webhook settings -->
+    <string name="webhook_config_title">Webhook Configuration</string>
+    <string name="webhook_not_configured">Not configured</string>
+    <string name="webhook_enable">Enable webhook</string>
+    <string name="webhook_url_hint">Webhook URL</string>
+    <string name="webhook_secret_hint">Secret key (optional)</string>
+    <string name="webhook_retry_hint">Retry count</string>
+    <string name="webhook_test">Test</string>
+    <string name="webhook_save">Save</string>
+
+    <!-- Transaction item -->
+    <string name="item_bank">Bank</string>
+    <string name="item_content">Transfer content</string>
+    <string name="item_sender">Sender</string>
+    <string name="item_time">14:30 15/05</string>
+    <string name="item_amount_format">+%,.0f VND</string>
+    <string name="item_date_format">dd/MM HH:mm</string>
+
+    <!-- Transaction status -->
+    <string name="status_pending">New</string>
+    <string name="status_confirmed">OK</string>
+    <string name="status_expired">Expired</string>
+    <string name="status_failed">Failed</string>
+
+    <!-- Dialogs -->
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_send">Send</string>
+    <string name="btn_grant">Grant Permission</string>
+    <string name="btn_skip">Not now</string>
+
+    <!-- Crash dialog -->
+    <string name="crash_title">App Crashed</string>
+    <string name="crash_message">BankNotify encountered an unexpected error. Would you like to send a crash report to help improve the app?</string>
+    <string name="btn_report">Send Report</string>
+    <string name="btn_details">View Details</string>
+    <string name="crash_detail_title">Error Details</string>
+    <string name="btn_dismiss">Dismiss</string>
+
+    <!-- Server messages -->
+    <string name="server_running">Server running on port %d</string>
+    <string name="server_stopped">Server stopped</string>
+    <string name="monitoring_active">Monitoring</string>
+    <string name="monitoring_inactive">Not granted</string>
+    <string name="refreshed">Refreshed</string>
+    <string name="monitor_disabled_hint">Disable monitoring: go to Settings &gt; Special access &gt; Notification Listener</string>
+
+    <!-- Clear dialog -->
+    <string name="clear_dialog_title">Delete Data</string>
+    <string name="clear_dialog_message">Are you sure you want to delete all transactions?</string>
+
+    <!-- Transaction detail -->
+    <string name="tx_detail_title">Transaction Details</string>
+    <string name="tx_confirm">Confirm</string>
+    <string name="tx_confirmed">Confirmed</string>
+    <string name="tx_amount_label">Amount: %s</string>
+    <string name="tx_sender_label">Sender: %s</string>
+    <string name="tx_ref_label">Ref: %s</string>
+    <string name="tx_balance_label">Balance: %s</string>
+    <string name="tx_time_label">Time: %s</string>
+    <string name="tx_na">N/A</string>
+
+    <!-- Update dialog -->
+    <string name="update_dialog_title">Software Update</string>
+    <string name="update_dialog_message">Enter the update server URL (JSON)</string>
+    <string name="update_url_hint">Update check URL</string>
+    <string name="saved">Saved</string>
+
+    <!-- About dialog -->
+    <string name="about_title">About BankNotify</string>
+    <string name="about_message">BankNotify %s\n\nA banking notification monitor that forwards transactions via webhook/API.\n\nOpen source.</string>
+
+    <!-- API docs -->
+    <string name="api_docs_title">API Docs</string>
+    <string name="api_docs_message">Base: http://&lt;ip&gt;:%d/api/v1\n\nGET  /health          - Ping\nGET  /transactions    - Filter: bank_code, status, from_date, to_date, min_amount, search, limit, offset\nPOST /transactions/{id}/confirm\nGET  /transactions/stats\nGET  /transactions/unread\n\nGET/POST  /webhook    - Webhook config\nPOST /webhook/test    - Test webhook\n\nGET/POST  /config     - Server config\n\nGET/POST  /update/check  - Check OTA update\nGET/POST  /update/url    - Update check URL</string>
+
+    <!-- Webhook messages -->
+    <string name="webhook_url_empty">Webhook not configured</string>
+    <string name="webhook_enabled_msg">Webhook enabled → %s</string>
+    <string name="webhook_disabled_msg">Webhook disabled</string>
+    <string name="webhook_url_required">Enter URL</string>
+    <string name="webhook_testing">Testing…</string>
+    <string name="webhook_test_success">Success</string>
+    <string name="webhook_test_fail">Failed</string>
+</resources>

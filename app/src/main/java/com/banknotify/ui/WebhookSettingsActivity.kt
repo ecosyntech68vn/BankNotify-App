@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.banknotify.R
 import com.banknotify.databinding.ActivityWebhookBinding
 import com.banknotify.service.webhook.WebhookManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +24,7 @@ class WebhookSettingsActivity : AppCompatActivity() {
         b = ActivityWebhookBinding.inflate(layoutInflater)
         setContentView(b.root)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = "Cấu hình Webhook"
+        title = getString(R.string.webhook_config_title)
 
         loadConfig()
         b.btnSave.setOnClickListener { save() }
@@ -46,26 +47,26 @@ class WebhookSettingsActivity : AppCompatActivity() {
         webhookManager.isEnabled = b.webhookEnabled.isChecked
         webhookManager.retryCount = b.webhookRetry.text.toString().toIntOrNull() ?: 3
         updateStatus()
-        Toast.makeText(this, "Đã lưu", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.saved), Toast.LENGTH_SHORT).show()
     }
 
     private fun test() {
         val url = b.webhookUrl.text.toString().trim()
-        if (url.isBlank()) { Toast.makeText(this, "Nhập URL", Toast.LENGTH_SHORT).show(); return }
-        Toast.makeText(this, "Đang kiểm tra...", Toast.LENGTH_SHORT).show()
+        if (url.isBlank()) { Toast.makeText(this, getString(R.string.webhook_url_required), Toast.LENGTH_SHORT).show(); return }
+        Toast.makeText(this, getString(R.string.webhook_testing), Toast.LENGTH_SHORT).show()
         webhookManager.testWebhook(url) { success, message ->
             AlertDialog.Builder(this)
-                .setTitle(if (success) "Thành công" else "Thất bại")
+                .setTitle(getString(if (success) R.string.webhook_test_success else R.string.webhook_test_fail))
                 .setMessage(message)
-                .setPositiveButton("OK", null).show()
+                .setPositiveButton(getString(R.string.btn_ok), null).show()
         }
     }
 
     private fun updateStatus() {
         b.webhookStatus.text = when {
-            webhookManager.webhookUrl.isBlank() -> "Chưa cấu hình webhook"
-            webhookManager.isEnabled -> "Webhook đang bật → ${webhookManager.webhookUrl}"
-            else -> "Webhook đang tắt"
+            webhookManager.webhookUrl.isBlank() -> getString(R.string.webhook_url_empty)
+            webhookManager.isEnabled -> getString(R.string.webhook_enabled_msg, webhookManager.webhookUrl)
+            else -> getString(R.string.webhook_disabled_msg)
         }
     }
 }

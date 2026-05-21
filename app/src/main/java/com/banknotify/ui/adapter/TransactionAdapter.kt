@@ -19,8 +19,6 @@ class TransactionAdapter(
     private val onClick: (Transaction) -> Unit
 ) : PagingDataAdapter<Transaction, TransactionAdapter.VH>(DiffCallback()) {
 
-    private val df = SimpleDateFormat("dd/MM HH:mm", Locale.getDefault())
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         return VH(LayoutInflater.from(parent.context).inflate(R.layout.item_transaction, parent, false))
     }
@@ -28,6 +26,7 @@ class TransactionAdapter(
     override fun onBindViewHolder(holder: VH, pos: Int) = holder.bind(getItem(pos))
 
     inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val res = itemView.resources
         private val bankName = itemView.findViewById<TextView>(R.id.item_bank_name)!!
         private val amount = itemView.findViewById<TextView>(R.id.item_amount)!!
         private val content = itemView.findViewById<TextView>(R.id.item_content)!!
@@ -35,20 +34,21 @@ class TransactionAdapter(
         private val badge = itemView.findViewById<TextView>(R.id.item_status)!!
         private val sender = itemView.findViewById<TextView>(R.id.item_sender)!!
         private val card = itemView.findViewById<CardView>(R.id.item_card)!!
+        private val df = SimpleDateFormat(res.getString(R.string.item_date_format), Locale.getDefault())
 
         fun bind(tx: Transaction?) {
             if (tx == null) return
             bankName.text = tx.bankName
-            amount.text = "+${String.format("%,.0f", tx.amount)} VND"
+            amount.text = res.getString(R.string.item_amount_format, tx.amount)
             amount.setTextColor(if (tx.amount > 0) itemView.context.getColor(R.color.success) else itemView.context.getColor(R.color.error))
             content.text = tx.content
             time.text = df.format(Date(tx.transactionDate))
             sender.text = tx.senderName ?: ""
             badge.text = when (tx.status) {
-                TransactionStatus.PENDING -> "Mới"
-                TransactionStatus.CONFIRMED -> "Đã XN"
-                TransactionStatus.EXPIRED -> "Hết hạn"
-                TransactionStatus.FAILED -> "Lỗi"
+                TransactionStatus.PENDING -> res.getString(R.string.status_pending)
+                TransactionStatus.CONFIRMED -> res.getString(R.string.status_confirmed)
+                TransactionStatus.EXPIRED -> res.getString(R.string.status_expired)
+                TransactionStatus.FAILED -> res.getString(R.string.status_failed)
             }
             card.setOnClickListener { onClick(tx) }
         }
