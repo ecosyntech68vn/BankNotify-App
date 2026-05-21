@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="32dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="120dp"
@@ -117,5 +115,4 @@
             android:text="@string/onboarding_skip"
             android:textColor="?attr/colorOnSurfaceVariant" />
 
-    </LinearLayout>
-</layout>
+</LinearLayout>
