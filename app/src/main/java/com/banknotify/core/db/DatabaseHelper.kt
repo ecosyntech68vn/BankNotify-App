@@ -39,8 +39,16 @@ class DatabaseHelper(context: android.content.Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_TRANSACTIONS")
-        onCreate(db)
+        for (v in oldVersion until newVersion) {
+            migrate(db, v + 1)
+        }
+    }
+
+    private fun migrate(db: SQLiteDatabase, targetVersion: Int) {
+        when (targetVersion) {
+            // Add future migrations here, e.g.:
+            // 2 -> db.execSQL("ALTER TABLE $TABLE_TRANSACTIONS ADD COLUMN $COL_NEW_FIELD TEXT")
+        }
     }
 
     fun insertTransaction(tx: Transaction): Long {
