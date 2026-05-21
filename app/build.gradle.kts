@@ -46,4 +46,12 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("org.nanohttpd:nanohttpd:2.3.1")
     implementation("com.google.code.gson:gson:2.10.1")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.11.1")
+    testImplementation("com.google.truth:truth:1.4.2")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:runner:1.5.2")
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
