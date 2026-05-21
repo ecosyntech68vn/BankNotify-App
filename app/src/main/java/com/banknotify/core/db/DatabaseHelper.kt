@@ -1,6 +1,7 @@
 package com.banknotify.core.db
 
 import android.content.Context
+import androidx.paging.PagingSource
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionFilter
 import com.banknotify.core.model.TransactionStatus

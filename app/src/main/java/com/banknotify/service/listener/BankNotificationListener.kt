@@ -9,12 +9,19 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.db.DatabaseHelper
 import com.banknotify.core.model.Transaction
 import com.banknotify.parser.BankParserRegistry
 import com.banknotify.service.webhook.WebhookManager
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 @SuppressLint("OverrideAbstract")
 class BankNotificationListener : NotificationListenerService() {
+
+    @Inject lateinit var dbHelper: DatabaseHelper
+    @Inject lateinit var webhookManager: WebhookManager
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         val packageName = sbn.packageName
@@ -33,12 +40,11 @@ class BankNotificationListener : NotificationListenerService() {
             val transaction = BankParserRegistry.parse(packageName, title, fullBody)
 
             if (transaction != null) {
-                val db = BankNotifyApp.instance.dbHelper
-                val id = db.insertTransaction(transaction)
+                val id = dbHelper.insertTransaction(transaction)
                 val savedTx = transaction.copy(id = id)
                 Log.i(TAG, "Parsed: ${savedTx.bankName} | ${savedTx.amount} VND")
                 notifyUser(savedTx)
-                WebhookManager.dispatch(savedTx)
+                webhookManager.dispatch(savedTx)
             } else {
                 Log.w(TAG, "Unparsed notification from $packageName")
             }

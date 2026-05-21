@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.content.FileProvider
+import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -15,18 +16,18 @@ import java.io.FileOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-object UpdateManager {
+class UpdateManager(private val context: Context, private val appConfig: AppConfig) {
 
-    private const val TAG = "UpdateManager"
-    private const val PREFS_KEY_CHECK_URL = "update_check_url"
-    private const val DEFAULT_CHECK_URL = ""
-    private const val DEFAULT_DOWNLOAD_DIR = "updates"
+    private val TAG = "UpdateManager"
+    private val PREFS_KEY_CHECK_URL = "update_check_url"
+    private val DEFAULT_CHECK_URL = ""
+    private val DEFAULT_DOWNLOAD_DIR = "updates"
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val gson = Gson()
 
     private val prefs by lazy {
-        BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_UPDATE, Context.MODE_PRIVATE)
+        context.getSharedPreferences(BankNotifyApp.PREF_UPDATE, Context.MODE_PRIVATE)
     }
 
     var checkUrl: String
@@ -47,11 +48,10 @@ object UpdateManager {
 
         scope.launch {
             try {
-                val app = BankNotifyApp.instance
                 val request = UpdateCheckRequest(
-                    currentVersion = app.appVersion,
-                    currentBuild = app.appBuild,
-                    packageName = app.packageName
+                    currentVersion = appConfig.version,
+                    currentBuild = appConfig.build,
+                    packageName = context.packageName
                 )
 
                 val conn = URL(url).openConnection() as HttpURLConnection
@@ -86,7 +86,7 @@ object UpdateManager {
         }
         scope.launch {
             try {
-                val dir = File(BankNotifyApp.instance.cacheDir, DEFAULT_DOWNLOAD_DIR)
+                val dir = File(context.cacheDir, DEFAULT_DOWNLOAD_DIR)
                 dir.mkdirs()
                 val apkFile = File(dir, "update-${updateInfo.latestVersion}.apk")
 
@@ -125,7 +125,6 @@ object UpdateManager {
 
     fun installUpdate(apkPath: String): Boolean {
         return try {
-            val context = BankNotifyApp.instance
             if (!ApkVerifier.verifyApk(context, apkPath)) {
                 Log.e(TAG, "APK signature verification failed")
                 return false
@@ -148,7 +147,4 @@ object UpdateManager {
             false
         }
     }
-
-    fun getUpdateCheckUrl(): String = checkUrl
-    fun setUpdateCheckUrl(url: String) { checkUrl = url.trim() }
 }

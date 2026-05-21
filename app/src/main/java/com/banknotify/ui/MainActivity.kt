@@ -10,6 +10,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionStatus
@@ -31,6 +32,12 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var dbHelper: com.banknotify.core.db.DatabaseHelper
+
+    @Inject
+    lateinit var updateManager: com.banknotify.update.UpdateManager
+
+    @Inject
+    lateinit var appConfig: AppConfig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (!OnboardingActivity.isDone(this)) {
@@ -204,14 +211,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showUpdateDialog() {
-        val url = com.banknotify.update.UpdateManager.getUpdateCheckUrl()
+        val url = updateManager.checkUrl
         val input = android.widget.EditText(this).apply { setText(url); hint = "URL kiểm tra cập nhật" }
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Cập nhật phần mềm")
             .setMessage("Nhập URL server cập nhật (JSON)")
             .setView(input)
             .setPositiveButton("Lưu") { _, _ ->
-                com.banknotify.update.UpdateManager.setUpdateCheckUrl(input.text.toString())
+                updateManager.checkUrl = input.text.toString()
                 Toast.makeText(this, "Đã lưu", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Huỷ", null).show()
@@ -220,7 +227,7 @@ class MainActivity : AppCompatActivity() {
     private fun showAbout() {
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("BankNotify").setMessage("""
-                Phiên bản: ${BankNotifyApp.instance.appVersion}
+                Phiên bản: ${appConfig.version}
                 Ứng dụng đọc thông báo ngân hàng xác thực thanh toán tự động.
                 Hỗ trợ: VCB, TCB, MB, ACB, VPB, TPB, VIB, BIDV, CTG, STB, HDB, OCB, MSB, SHB
                 Cách dùng: 1. Cấp quyền Notification Listener 2. Bật server API 3. Cấu hình webhook

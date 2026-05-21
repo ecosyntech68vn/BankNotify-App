@@ -19,13 +19,13 @@ import java.net.URL
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-object WebhookManager {
+class WebhookManager(private val context: Context) {
 
-    private const val KEY_URL = "webhook_url"
-    private const val KEY_ENABLED = "webhook_enabled"
-    private const val KEY_SECRET = "webhook_secret"
-    private const val KEY_RETRY = "webhook_retry_count"
-    private const val DEFAULT_RETRY = 3
+    private val KEY_URL = "webhook_url"
+    private val KEY_ENABLED = "webhook_enabled"
+    private val KEY_SECRET = "webhook_secret"
+    private val KEY_RETRY = "webhook_retry_count"
+    private val DEFAULT_RETRY = 3
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val gson = Gson()
@@ -33,7 +33,7 @@ object WebhookManager {
     private val TAG = "WebhookManager"
 
     private val prefs: SharedPreferences by lazy {
-        BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_WEBHOOK, Context.MODE_PRIVATE)
+        context.getSharedPreferences(BankNotifyApp.PREF_WEBHOOK, Context.MODE_PRIVATE)
     }
 
     var webhookUrl: String
@@ -45,8 +45,8 @@ object WebhookManager {
         set(value) = prefs.edit().putBoolean(KEY_ENABLED, value).apply()
 
     var secret: String
-        get() = SecurePrefs.getString(BankNotifyApp.instance, BankNotifyApp.PREF_WEBHOOK, KEY_SECRET)
-        set(value) = SecurePrefs.setString(BankNotifyApp.instance, BankNotifyApp.PREF_WEBHOOK, KEY_SECRET, value)
+        get() = SecurePrefs.getString(context, BankNotifyApp.PREF_WEBHOOK, KEY_SECRET)
+        set(value) = SecurePrefs.setString(context, BankNotifyApp.PREF_WEBHOOK, KEY_SECRET, value)
 
     var retryCount: Int
         get() = prefs.getInt(KEY_RETRY, DEFAULT_RETRY)

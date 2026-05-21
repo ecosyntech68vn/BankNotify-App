@@ -8,11 +8,21 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.db.DatabaseHelper
+import com.banknotify.service.webhook.WebhookManager
+import com.banknotify.update.UpdateManager
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ApiServerService : Service() {
+
+    @Inject lateinit var dbHelper: DatabaseHelper
+    @Inject lateinit var webhookManager: WebhookManager
+    @Inject lateinit var updateManager: UpdateManager
+    @Inject lateinit var appConfig: AppConfig
 
     override fun onCreate() {
         super.onCreate()
@@ -44,7 +54,7 @@ class ApiServerService : Service() {
     private fun startServer(port: Int) {
         try {
             KtorApiServer.stop()
-            KtorApiServer.start(port)
+            KtorApiServer.start(port, dbHelper, webhookManager, updateManager, appConfig, this)
             Log.d(TAG, "Server started on port $port")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start server", e)
@@ -82,11 +92,10 @@ class ApiServerService : Service() {
 
         fun stop(context: Context) { context.stopService(Intent(context, ApiServerService::class.java)) }
 
-        fun restart(port: Int) {
-            val ctx = BankNotifyApp.instance
+        fun restart(context: Context, port: Int) {
             isRunning = false
-            stop(ctx)
-            start(ctx, port)
+            stop(context)
+            start(context, port)
         }
     }
 }
