@@ -1,14 +1,18 @@
--keep class fi.iki.elonen.** { *; }
+-keepattributes SourceFile,LineNumberTable
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+
+-keep class fi.iki.elonen.NanoHTTPD { *; }
+-keep class fi.iki.elonen.NanoHTTPD$Response { *; }
 -dontwarn fi.iki.elonen.**
 
 -keep class com.banknotify.core.model.** { *; }
 -keep class com.banknotify.update.UpdateInfo { *; }
+-keep class com.banknotify.update.UpdateCheckRequest { *; }
+-keep class com.banknotify.update.UpdateCheckResponse { *; }
 
 -keep class com.banknotify.service.server.ApiServer { *; }
-
--keepattributes Signature
--keepattributes *Annotation*
--keepattributes EnclosingMethod
 
 -keep class * extends androidx.room.RoomDatabase
 -dontwarn androidx.room.paging.**

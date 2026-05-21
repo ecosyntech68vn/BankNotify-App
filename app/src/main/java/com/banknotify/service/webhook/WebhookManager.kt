@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.SecurePrefs
 import com.banknotify.core.model.Transaction
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -44,8 +45,8 @@ object WebhookManager {
         set(value) = prefs.edit().putBoolean(KEY_ENABLED, value).apply()
 
     var secret: String
-        get() = prefs.getString(KEY_SECRET, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_SECRET, value.trim()).apply()
+        get() = SecurePrefs.getString(BankNotifyApp.instance, BankNotifyApp.PREF_WEBHOOK, KEY_SECRET)
+        set(value) = SecurePrefs.setString(BankNotifyApp.instance, BankNotifyApp.PREF_WEBHOOK, KEY_SECRET, value)
 
     var retryCount: Int
         get() = prefs.getInt(KEY_RETRY, DEFAULT_RETRY)
@@ -92,7 +93,8 @@ object WebhookManager {
     private fun isValidUrl(url: String): Boolean {
         if (!url.startsWith("http://") && !url.startsWith("https://")) return false
         if (url.startsWith("http://") && secret.isNotBlank()) {
-            Log.w(TAG, "Webhook secret sent over unencrypted HTTP!")
+            Log.w(TAG, "Blocking webhook to $url: secret would be sent over unencrypted HTTP")
+            return false
         }
         return true
     }

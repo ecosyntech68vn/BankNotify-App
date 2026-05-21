@@ -1,8 +1,8 @@
 package com.banknotify.service.server
 
-import android.content.Context
 import android.util.Log
 import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.SecurePrefs
 import com.banknotify.core.model.TransactionFilter
 import com.banknotify.core.model.TransactionStatus
 import com.banknotify.service.webhook.WebhookManager
@@ -51,9 +51,9 @@ class ApiServer(port: Int) : NanoHTTPD("127.0.0.1", port) {
     }
 
     private fun checkAuth(headers: Map<String, String>): Boolean {
-        val prefs = BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_SERVER, Context.MODE_PRIVATE)
-        if (!prefs.getBoolean(KEY_AUTH_ENABLED, false)) return true
-        val key = prefs.getString(KEY_API_KEY, "") ?: ""
+        val ctx = BankNotifyApp.instance
+        if (!SecurePrefs.getBool(ctx, BankNotifyApp.PREF_SERVER, KEY_AUTH_ENABLED)) return true
+        val key = SecurePrefs.getString(ctx, BankNotifyApp.PREF_SERVER, KEY_API_KEY)
         if (key.isBlank()) return true
         val provided = headers["x-api-key"] ?: headers["authorization"]?.removePrefix("Bearer ")?.trim() ?: ""
         return MessageDigest.isEqual(key.toByteArray(), provided.toByteArray())
@@ -238,10 +238,10 @@ class ApiServer(port: Int) : NanoHTTPD("127.0.0.1", port) {
     }
 
     private fun handleGetConfig(): Response {
-        val prefs = BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_SERVER, Context.MODE_PRIVATE)
+        val ctx = BankNotifyApp.instance
         return ok("success" to true, "data" to mapOf(
             "server_port" to listeningPort,
-            "auth_enabled" to prefs.getBoolean(KEY_AUTH_ENABLED, false),
+            "auth_enabled" to SecurePrefs.getBool(ctx, BankNotifyApp.PREF_SERVER, KEY_AUTH_ENABLED),
             "webhook_url" to WebhookManager.webhookUrl,
             "webhook_enabled" to WebhookManager.isEnabled,
             "update_url" to UpdateManager.checkUrl
@@ -252,10 +252,10 @@ class ApiServer(port: Int) : NanoHTTPD("127.0.0.1", port) {
         val body = readBody(session) ?: return error(400, "Empty body")
         try {
             val data = gson.fromJson(body, Map::class.java) as? Map<*, *> ?: return error(400, "Invalid JSON")
-            val prefs = BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_SERVER, Context.MODE_PRIVATE)
+            val ctx = BankNotifyApp.instance
 
-            (data["auth_enabled"] as? Boolean)?.let { prefs.edit().putBoolean(KEY_AUTH_ENABLED, it).apply() }
-            (data["api_key"] as? String)?.let { prefs.edit().putString(KEY_API_KEY, it.trim()).apply() }
+            (data["auth_enabled"] as? Boolean)?.let { SecurePrefs.setBool(ctx, BankNotifyApp.PREF_SERVER, KEY_AUTH_ENABLED, it) }
+            (data["api_key"] as? String)?.let { SecurePrefs.setString(ctx, BankNotifyApp.PREF_SERVER, KEY_API_KEY, it.trim()) }
             (data["server_port"] as? Number)?.let { newPort ->
                 val p = newPort.toInt()
                 if (p in 1024..65535 && p != listeningPort) {
@@ -276,9 +276,6 @@ class ApiServer(port: Int) : NanoHTTPD("127.0.0.1", port) {
     private fun json(data: Any, status: Int): Response {
         val json = gson.toJson(data)
         val resp = newFixedLengthResponse(Response.Status.lookup(status), "application/json", json)
-        resp.addHeader("Access-Control-Allow-Origin", "*")
-        resp.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
-        resp.addHeader("Access-Control-Allow-Headers", "Content-Type, X-API-Key, Authorization")
         return resp
     }
 

@@ -2,7 +2,6 @@ package com.banknotify.update
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
 import androidx.core.content.FileProvider
 import com.banknotify.core.BankNotifyApp
@@ -40,6 +39,11 @@ object UpdateManager {
             callback(UpdateCheckResponse(hasUpdate = false))
             return
         }
+        if (!url.startsWith("https://")) {
+            Log.w(TAG, "Update check URL must use HTTPS")
+            callback(UpdateCheckResponse(hasUpdate = false))
+            return
+        }
 
         scope.launch {
             try {
@@ -47,12 +51,7 @@ object UpdateManager {
                 val request = UpdateCheckRequest(
                     currentVersion = app.appVersion,
                     currentBuild = app.appBuild,
-                    packageName = app.packageName,
-                    deviceInfo = mapOf(
-                        "os" to "Android ${Build.VERSION.RELEASE}",
-                        "sdk" to Build.VERSION.SDK_INT.toString(),
-                        "model" to "${Build.MANUFACTURER} ${Build.MODEL}"
-                    )
+                    packageName = app.packageName
                 )
 
                 val conn = URL(url).openConnection() as HttpURLConnection
@@ -80,6 +79,11 @@ object UpdateManager {
     }
 
     fun downloadUpdate(updateInfo: UpdateInfo, progress: (Int) -> Unit, callback: (Boolean, String) -> Unit) {
+        if (!updateInfo.downloadUrl.startsWith("https://")) {
+            Log.w(TAG, "Download URL must use HTTPS")
+            callback(false, "HTTPS required for download")
+            return
+        }
         scope.launch {
             try {
                 val dir = File(BankNotifyApp.instance.cacheDir, DEFAULT_DOWNLOAD_DIR)
