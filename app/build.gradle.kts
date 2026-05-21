@@ -103,7 +103,7 @@ dependencies {
 androidComponents {
     onVariants { variant ->
         variant.sources.java?.srcDir(
-            project.layout.buildDirectory.dir("generated/aapt_source_out_dir/${variant.name}/out")
+            File(project.buildDir, "generated/aapt_source_out_dir/${variant.name}/out")
         )
     }
 }
