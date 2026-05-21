@@ -14,8 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ApiServerService : Service() {
 
-    private var server: ApiServer? = null
-
     override fun onCreate() {
         super.onCreate()
         startServer(BankNotifyApp.DEFAULT_PORT)
@@ -26,11 +24,12 @@ class ApiServerService : Service() {
         startForeground(NOTIFICATION_ID, notification)
 
         intent?.getIntExtra("port", 0)?.let { port ->
-            if (port > 0 && port != server?.listeningPort) {
+            if (port > 0 && port != KtorApiServer.port) {
                 stopServer()
                 startServer(port)
             }
         }
+        isRunning = true
         return START_STICKY
     }
 
@@ -44,8 +43,8 @@ class ApiServerService : Service() {
 
     private fun startServer(port: Int) {
         try {
-            server?.stop()
-            server = ApiServer(port).also { it.start() }
+            KtorApiServer.stop()
+            KtorApiServer.start(port)
             Log.d(TAG, "Server started on port $port")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start server", e)
@@ -53,17 +52,17 @@ class ApiServerService : Service() {
     }
 
     private fun stopServer() {
-        try { server?.stop(); server = null } catch (e: Exception) { Log.w(TAG, "stopServer", e) }
+        try { KtorApiServer.stop() } catch (e: Exception) { Log.w(TAG, "stopServer", e) }
     }
 
     private fun createNotification(): Notification {
-        val port = server?.listeningPort ?: BankNotifyApp.DEFAULT_PORT
+        val currentPort = KtorApiServer.port
         return NotificationCompat.Builder(this, BankNotifyApp.CHANNEL_SERVER)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
             .setContentTitle("BankNotify Server")
-            .setContentText("API đang chạy tại http://localhost:$port")
+            .setContentText("API đang chạy tại http://localhost:$currentPort")
             .setStyle(NotificationCompat.BigTextStyle().bigText(
-                "HTTP Server đang chạy\nPort: $port\nAPI: http://<ip>:$port/api/v1/"))
+                "HTTP Server đang chạy\nPort: $currentPort\nAPI: http://<ip>:$currentPort/api/v1/"))
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()

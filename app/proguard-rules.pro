@@ -3,10 +3,6 @@
 -keepattributes *Annotation*
 -keepattributes EnclosingMethod
 
--keep class fi.iki.elonen.NanoHTTPD { *; }
--keep class fi.iki.elonen.NanoHTTPD$Response { *; }
--dontwarn fi.iki.elonen.**
-
 -keep class com.banknotify.core.model.** { *; }
 -keep class com.banknotify.update.UpdateInfo { *; }
 -keep class com.banknotify.update.UpdateCheckRequest { *; }
