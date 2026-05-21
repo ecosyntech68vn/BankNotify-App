@@ -69,7 +69,7 @@ object CrashReporter {
             pw.println()
             throwable.printStackTrace(pw)
             pw.flush()
-            FileWriter(file).use { it.write(sw.toString()) }
+            FileWriter(file).use { it.write(sanitize(sw.toString())) }
             Log.e(TAG, "Crash saved to ${file.absolutePath}")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to save crash", e)
@@ -78,4 +78,23 @@ object CrashReporter {
 
     private fun getCrashDir(context: Context): File =
         File(context.cacheDir, CRASH_DIR)
+
+    private val REDACT_PATTERNS = listOf(
+        Regex("""(?i)"(secret|api_key|webhook_secret|password|token)"\s*:\s*"[^"]*"""),
+        Regex("""(?i)(x-api-key|authorization)\s*[:=]\s*[^\s,;}]+"""),
+        Regex("""\b\d{4}[ -]?\d{4}[ -]?\d{4}[ -]?\d{4}\b"""),
+    )
+
+    private fun sanitize(text: String): String {
+        var result = text
+        for (pattern in REDACT_PATTERNS) {
+            result = pattern.replace(result) { match ->
+                val s = match.value
+                val idx = s.indexOfAny(charArrayOf(':', '='))
+                if (idx >= 0) s.substring(0, idx + 1) + " [REDACTED]"
+                else "[REDACTED]"
+            }
+        }
+        return result
+    }
 }
