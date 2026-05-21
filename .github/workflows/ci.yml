@@ -28,7 +28,7 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew lint --continue
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: lint-results
@@ -45,7 +45,7 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew testDebugUnitTest --continue
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-results
@@ -62,7 +62,7 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v3
       - run: ./gradlew assembleDebug
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: apk-debug
           path: app/build/outputs/apk/debug/*.apk
