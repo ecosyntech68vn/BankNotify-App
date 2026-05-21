@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         }
         b.serverSwitch.setOnCheckedChangeListener { _, isChecked ->
             val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
-            val port = prefs.getInt("server_port", 8765)
+            val port = prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
             if (isChecked) {
                 ApiServerService.start(this, port)
                 Toast.makeText(this, "Server đang chạy port $port", Toast.LENGTH_SHORT).show()
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             else androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_red_dark)
         )
         val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
-        b.serverPortText.text = "Port: ${prefs.getInt("server_port", 8765)}"
+        b.serverPortText.text = "Port: ${prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)}"
         b.serverSwitch.isChecked = ApiServerService.isRunning
     }
 
@@ -177,7 +177,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showApiDocs() {
-        val port = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE).getInt("server_port", 8765)
+        val port = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE).getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("API Docs").setMessage("""
                 Base: http://<ip>:$port/api/v1

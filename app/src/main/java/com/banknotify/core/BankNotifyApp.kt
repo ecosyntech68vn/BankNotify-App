@@ -59,6 +59,8 @@ class BankNotifyApp : Application() {
         const val PREF_SERVER = "server_prefs"
         const val PREF_UPDATE = "update_prefs"
         const val PREF_WEBHOOK = "webhook_prefs"
+        const val DEFAULT_PORT = 8765
+        const val KEY_SERVER_PORT = "server_port"
 
         lateinit var instance: BankNotifyApp
             private set

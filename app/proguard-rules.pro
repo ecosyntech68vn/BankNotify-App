@@ -8,6 +8,11 @@
 
 -keepattributes Signature
 -keepattributes *Annotation*
+-keepattributes EnclosingMethod
 
 -keep class * extends androidx.room.RoomDatabase
 -dontwarn androidx.room.paging.**
+
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }

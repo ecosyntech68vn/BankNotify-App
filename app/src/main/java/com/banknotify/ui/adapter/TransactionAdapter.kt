@@ -39,7 +39,7 @@ class TransactionAdapter(
         fun bind(tx: Transaction) {
             bankName.text = tx.bankName
             amount.text = "+${String.format("%,.0f", tx.amount)} VND"
-            amount.setTextColor(if (tx.amount > 0) itemView.context.getColor(android.R.color.holo_green_dark) else itemView.context.getColor(android.R.color.holo_red_dark))
+            amount.setTextColor(if (tx.amount > 0) itemView.context.getColor(com.banknotify.R.color.success) else itemView.context.getColor(com.banknotify.R.color.error))
             content.text = tx.content
             time.text = df.format(Date(tx.transactionDate))
             sender.text = tx.senderName ?: ""

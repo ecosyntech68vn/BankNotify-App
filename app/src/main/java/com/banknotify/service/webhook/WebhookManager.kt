@@ -1,6 +1,7 @@
 package com.banknotify.service.webhook
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -10,7 +11,10 @@ import com.google.gson.Gson
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.MessageDigest
 import java.util.concurrent.Executors
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
 
 object WebhookManager {
 
@@ -25,23 +29,25 @@ object WebhookManager {
     private val handler = Handler(Looper.getMainLooper())
     private val TAG = "WebhookManager"
 
-    private fun prefs() = BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_WEBHOOK, Context.MODE_PRIVATE)
+    private val prefs: SharedPreferences by lazy {
+        BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_WEBHOOK, Context.MODE_PRIVATE)
+    }
 
     var webhookUrl: String
-        get() = prefs().getString(KEY_URL, "") ?: ""
-        set(value) = prefs().edit().putString(KEY_URL, value.trim()).apply()
+        get() = prefs.getString(KEY_URL, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_URL, value.trim()).apply()
 
     var isEnabled: Boolean
-        get() = prefs().getBoolean(KEY_ENABLED, false)
-        set(value) = prefs().edit().putBoolean(KEY_ENABLED, value).apply()
+        get() = prefs.getBoolean(KEY_ENABLED, false)
+        set(value) = prefs.edit().putBoolean(KEY_ENABLED, value).apply()
 
     var secret: String
-        get() = prefs().getString(KEY_SECRET, "") ?: ""
-        set(value) = prefs().edit().putString(KEY_SECRET, value.trim()).apply()
+        get() = prefs.getString(KEY_SECRET, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_SECRET, value.trim()).apply()
 
     var retryCount: Int
-        get() = prefs().getInt(KEY_RETRY, DEFAULT_RETRY)
-        set(value) = prefs().edit().putInt(KEY_RETRY, value.coerceIn(0, 10)).apply()
+        get() = prefs.getInt(KEY_RETRY, DEFAULT_RETRY)
+        set(value) = prefs.edit().putInt(KEY_RETRY, value.coerceIn(0, 10)).apply()
 
     fun dispatch(transaction: Transaction) {
         if (!isEnabled || webhookUrl.isBlank()) return
@@ -82,7 +88,11 @@ object WebhookManager {
     }
 
     private fun isValidUrl(url: String): Boolean {
-        return url.startsWith("http://") || url.startsWith("https://")
+        if (!url.startsWith("http://") && !url.startsWith("https://")) return false
+        if (url.startsWith("http://") && secret.isNotBlank()) {
+            Log.w(TAG, "Webhook secret sent over unencrypted HTTP!")
+        }
+        return true
     }
 
     private fun buildPayload(tx: Transaction): String {
@@ -111,7 +121,10 @@ object WebhookManager {
                 val conn = URL(url).openConnection() as HttpURLConnection
                 conn.requestMethod = "POST"
                 conn.setRequestProperty("Content-Type", "application/json")
-                if (secret.isNotBlank()) conn.setRequestProperty("X-Webhook-Secret", secret)
+                if (secret.isNotBlank()) {
+                    conn.setRequestProperty("X-Webhook-Secret", secret)
+                    conn.setRequestProperty("X-Webhook-Signature", signPayload(payload))
+                }
                 conn.doOutput = true
                 conn.connectTimeout = 10000
                 conn.readTimeout = 10000
@@ -132,5 +145,26 @@ object WebhookManager {
             }
         }
         Log.e(TAG, "Webhook failed after $maxRetries retries")
+    }
+
+    private fun signPayload(payload: String): String {
+        return try {
+            val mac = Mac.getInstance("HmacSHA256")
+            mac.init(SecretKeySpec(secret.toByteArray(), "HmacSHA256"))
+            bytesToHex(mac.doFinal(payload.toByteArray()))
+        } catch (e: Exception) {
+            Log.e(TAG, "HMAC signing failed", e)
+            ""
+        }
+    }
+
+    private fun bytesToHex(bytes: ByteArray): String {
+        val hexChars = CharArray(bytes.size * 2)
+        for (i in bytes.indices) {
+            val v = bytes[i].toInt() and 0xFF
+            hexChars[i * 2] = "0123456789abcdef"[v ushr 4]
+            hexChars[i * 2 + 1] = "0123456789abcdef"[v and 0x0F]
+        }
+        return String(hexChars)
     }
 }

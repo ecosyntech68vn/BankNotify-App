@@ -15,11 +15,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class ApiServerService : Service() {
 
     private var server: ApiServer? = null
-    private val DEFAULT_PORT = 8765
 
     override fun onCreate() {
         super.onCreate()
-        startServer(DEFAULT_PORT)
+        startServer(BankNotifyApp.DEFAULT_PORT)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -58,7 +57,7 @@ class ApiServerService : Service() {
     }
 
     private fun createNotification(): Notification {
-        val port = server?.listeningPort ?: DEFAULT_PORT
+        val port = server?.listeningPort ?: BankNotifyApp.DEFAULT_PORT
         return NotificationCompat.Builder(this, BankNotifyApp.CHANNEL_SERVER)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
             .setContentTitle("BankNotify Server")
@@ -75,7 +74,7 @@ class ApiServerService : Service() {
         private const val NOTIFICATION_ID = 1002
         @Volatile var isRunning = false
 
-        fun start(context: Context, port: Int = 8765) {
+        fun start(context: Context, port: Int = BankNotifyApp.DEFAULT_PORT) {
             isRunning = true
             val intent = Intent(context, ApiServerService::class.java).apply { putExtra("port", port) }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) context.startForegroundService(intent)

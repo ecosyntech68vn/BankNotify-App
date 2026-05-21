@@ -22,7 +22,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "banknotify.db"
                 )
-                    .fallbackToDestructiveMigration()
                     .allowMainThreadQueries()
                     .build()
                     .also { INSTANCE = it }

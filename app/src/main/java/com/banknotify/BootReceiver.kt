@@ -11,7 +11,7 @@ class BootReceiver : BroadcastReceiver() {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             val prefs = context.getSharedPreferences(BankNotifyApp.PREF_SERVER, Context.MODE_PRIVATE)
             if (prefs.getBoolean("auto_start_server", true)) {
-                val port = prefs.getInt("server_port", 8765)
+                val port = prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
                 ApiServerService.start(context, port)
             }
         }

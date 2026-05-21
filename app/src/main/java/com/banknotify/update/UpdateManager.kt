@@ -23,11 +23,13 @@ object UpdateManager {
     private val executor = Executors.newSingleThreadExecutor()
     private val gson = Gson()
 
+    private val prefs by lazy {
+        BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_UPDATE, Context.MODE_PRIVATE)
+    }
+
     var checkUrl: String
-        get() = BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_UPDATE, Context.MODE_PRIVATE)
-            .getString(PREFS_KEY_CHECK_URL, DEFAULT_CHECK_URL) ?: DEFAULT_CHECK_URL
-        set(value) = BankNotifyApp.instance.getSharedPreferences(BankNotifyApp.PREF_UPDATE, Context.MODE_PRIVATE)
-            .edit().putString(PREFS_KEY_CHECK_URL, value).apply()
+        get() = prefs.getString(PREFS_KEY_CHECK_URL, DEFAULT_CHECK_URL) ?: DEFAULT_CHECK_URL
+        set(value) = prefs.edit().putString(PREFS_KEY_CHECK_URL, value.trim()).apply()
 
     fun checkForUpdate(callback: (UpdateCheckResponse) -> Unit) {
         val url = checkUrl
