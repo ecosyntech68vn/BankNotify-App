@@ -11,8 +11,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import fi.iki.elonen.NanoHTTPD
 import java.io.ByteArrayInputStream
+import java.security.MessageDigest
 
-class ApiServer(port: Int) : NanoHTTPD("0.0.0.0", port) {
+class ApiServer(port: Int) : NanoHTTPD("127.0.0.1", port) {
 
     private val gson = GsonBuilder().create()
     private val TAG = "ApiServer"
@@ -54,7 +55,8 @@ class ApiServer(port: Int) : NanoHTTPD("0.0.0.0", port) {
         if (!prefs.getBoolean(KEY_AUTH_ENABLED, false)) return true
         val key = prefs.getString(KEY_API_KEY, "") ?: ""
         if (key.isBlank()) return true
-        return headers["x-api-key"] == key || headers["authorization"] == "Bearer $key"
+        val provided = headers["x-api-key"] ?: headers["authorization"]?.removePrefix("Bearer ")?.trim() ?: ""
+        return MessageDigest.isEqual(key.toByteArray(), provided.toByteArray())
     }
 
     override fun serve(session: IHTTPSession): Response {
