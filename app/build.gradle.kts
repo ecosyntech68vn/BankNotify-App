@@ -58,6 +58,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
 
     // To enable Firebase Crashlytics:
     // 1. Uncomment lines below

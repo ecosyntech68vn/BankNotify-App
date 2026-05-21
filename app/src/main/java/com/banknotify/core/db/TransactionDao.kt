@@ -1,5 +1,6 @@
 package com.banknotify.core.db
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -22,6 +23,9 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY transaction_date DESC LIMIT :limit OFFSET :offset")
     fun observeRecent(limit: Int, offset: Int): Flow<List<Transaction>>
+
+    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC")
+    fun getPagingSource(): PagingSource<Int, Transaction>
 
     @Query("SELECT COUNT(*) FROM transactions WHERE status = 'PENDING'")
     fun observeUnreadCount(): Flow<Int>

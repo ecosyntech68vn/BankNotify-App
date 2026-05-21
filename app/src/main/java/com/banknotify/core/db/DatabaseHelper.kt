@@ -35,6 +35,8 @@ class DatabaseHelper(context: Context) {
     fun observeTransactions(limit: Int = 20, offset: Int = 0): Flow<List<Transaction>> =
         dao.observeRecent(limit, offset)
 
+    fun getTransactionPagingSource(): PagingSource<Int, Transaction> = dao.getPagingSource()
+
     fun observeUnreadCount(): Flow<Int> = dao.observeUnreadCount()
 
     fun observeTotalCount(): Flow<Int> = dao.observeTotalCount()

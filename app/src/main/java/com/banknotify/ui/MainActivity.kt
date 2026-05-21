@@ -5,6 +5,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banknotify.core.BankNotifyApp
 import com.banknotify.core.model.Transaction
@@ -14,6 +17,7 @@ import com.banknotify.service.listener.BankNotificationListener
 import com.banknotify.service.server.ApiServerService
 import com.banknotify.ui.adapter.TransactionAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -94,15 +98,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeData() {
         lifecycleScope.launch {
+            val pager = Pager(PagingConfig(pageSize = 20)) {
+                dbHelper.getTransactionPagingSource()
+            }.flow.cachedIn(lifecycleScope)
+
+            pager.collectLatest { pagingData ->
+                adapter.submitData(lifecycle, pagingData)
+            }
+        }
+
+        lifecycleScope.launch {
             combine(
-                dbHelper.observeTransactions(20, 0),
                 dbHelper.observeTotalCount(),
                 dbHelper.observeTotalAmount(),
                 dbHelper.observeUnreadCount()
-            ) { txs, count, amount, unread ->
-                StatsData(txs, count, amount, unread)
+            ) { count, amount, unread ->
+                StatsData(count, amount, unread)
             }.collect { data ->
-                adapter.submitList(data.transactions)
                 b.transactionCount.text = data.totalCount.toString()
                 b.totalAmount.text = String.format("%,.0f VND", data.totalAmount)
                 b.unreadCount.text = data.unreadCount.toString()
@@ -238,7 +250,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private data class StatsData(
-        val transactions: List<Transaction>,
         val totalCount: Int,
         val totalAmount: Double,
         val unreadCount: Int

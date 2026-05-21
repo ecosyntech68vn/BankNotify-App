@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.banknotify.R
 import com.banknotify.core.model.Transaction
@@ -17,7 +17,7 @@ import java.util.Locale
 
 class TransactionAdapter(
     private val onClick: (Transaction) -> Unit
-) : ListAdapter<Transaction, TransactionAdapter.VH>(DiffCallback()) {
+) : PagingDataAdapter<Transaction, TransactionAdapter.VH>(DiffCallback()) {
 
     private val df = SimpleDateFormat("dd/MM HH:mm", Locale.getDefault())
 
@@ -36,10 +36,11 @@ class TransactionAdapter(
         private val sender = itemView.findViewById<TextView>(R.id.item_sender)!!
         private val card = itemView.findViewById<CardView>(R.id.item_card)!!
 
-        fun bind(tx: Transaction) {
+        fun bind(tx: Transaction?) {
+            if (tx == null) return
             bankName.text = tx.bankName
             amount.text = "+${String.format("%,.0f", tx.amount)} VND"
-            amount.setTextColor(if (tx.amount > 0) itemView.context.getColor(com.banknotify.R.color.success) else itemView.context.getColor(com.banknotify.R.color.error))
+            amount.setTextColor(if (tx.amount > 0) itemView.context.getColor(R.color.success) else itemView.context.getColor(R.color.error))
             content.text = tx.content
             time.text = df.format(Date(tx.transactionDate))
             sender.text = tx.senderName ?: ""
