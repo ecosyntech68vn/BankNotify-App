@@ -99,3 +99,11 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
 }
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.java?.srcDir(
+            project.layout.buildDirectory.dir("generated/aapt_source_out_dir/${variant.name}/out")
+        )
+    }
+}
