@@ -169,6 +169,14 @@
     <string name="dashboard_this_month">本月</string>
     <string name="dashboard_trend">趋势</string>
     <string name="dashboard_all_time">总计</string>
+    <string name="dashboard_net_worth">净资产</string>
+    <string name="dashboard_income_title">收入</string>
+    <string name="dashboard_expense_title">支出</string>
+    <string name="dashboard_income_vs_expense">收入 — 支出</string>
+    <string name="dashboard_expense_by_category">按类别支出</string>
+    <string name="dashboard_accounts">账户与钱包</string>
+    <string name="dashboard_no_category_data">暂无类别数据</string>
+    <string name="dashboard_category_other">其他</string>
 
     <!-- Security -->
     <string name="menu_security">安全</string>

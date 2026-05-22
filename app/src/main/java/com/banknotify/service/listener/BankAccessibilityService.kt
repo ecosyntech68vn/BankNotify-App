@@ -15,7 +15,7 @@ import com.banknotify.service.webhook.WebhookManager
 class BankAccessibilityService : AccessibilityService() {
 
     private val dbHelper: DatabaseHelper get() = BankNotifyApp.instance.dbHelper
-    private val webhookManager = WebhookManager()
+    private val webhookManager: WebhookManager by lazy { WebhookManager(this) }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if (event.eventType != AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) return

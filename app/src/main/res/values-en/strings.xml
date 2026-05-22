@@ -169,6 +169,14 @@
     <string name="dashboard_this_month">This Month</string>
     <string name="dashboard_trend">Trend</string>
     <string name="dashboard_all_time">All Time</string>
+    <string name="dashboard_net_worth">Net Worth</string>
+    <string name="dashboard_income_title">Income</string>
+    <string name="dashboard_expense_title">Expense</string>
+    <string name="dashboard_income_vs_expense">Income — Expense</string>
+    <string name="dashboard_expense_by_category">Expense by Category</string>
+    <string name="dashboard_accounts">Accounts &amp; Wallets</string>
+    <string name="dashboard_no_category_data">No category data yet</string>
+    <string name="dashboard_category_other">Other</string>
 
     <!-- Security -->
     <string name="menu_security">Security</string>
