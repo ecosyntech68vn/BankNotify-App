@@ -26,6 +26,19 @@ BankNotify lắng nghe thông báo (notification) từ ứng dụng ngân hàng 
 
 ---
 
+## ✨ Tính năng V2 — Quản trị tài chính cá nhân
+
+| Tính năng | Mô tả |
+|-----------|-------|
+| **Dashboard tổng quan** | Tổng tài sản, thu nhập vs chi tiêu tháng này, biểu đồ dòng tiền |
+| **Chi tiêu theo danh mục** | Tự động phân loại giao dịch vào 18 danh mục (Ăn uống, Mua sắm, Di chuyển, Tiện ích...) |
+| **Quản lý tài khoản/ví** | Theo dõi số dư từng tài khoản ngân hàng và ví điện tử |
+| **Tồn đầu kỳ** | Nhập số dư ban đầu cho từng tài khoản |
+| **Báo cáo dòng tiền** | Biểu đồ thu/chi theo tháng, xanh cho dương, đỏ cho âm |
+| **Hỗ trợ ví điện tử** | Momo, ZaloPay, ShopeePay, VNPay |
+
+---
+
 ## 🎯 Luồng hoạt động
 
 ```
@@ -48,9 +61,16 @@ BankNotify lắng nghe thông báo (notification) từ ứng dụng ngân hàng 
 ## 🧭 Giao diện & Tính năng
 
 ### Màn hình chính — Dashboard
+#### V1 (nhánh `main`)
 - Biểu đồ cột thống kê theo tháng
 - Tổng số giao dịch, tổng số tiền trong kỳ
-- Nút làm mới (refresh)
+
+#### V2 (nhánh `v2`) — Quản trị tài chính cá nhân
+- **Tổng tài sản** — tổng hợp số dư tất cả tài khoản ngân hàng, ví điện tử
+- **Thu nhập — Chi tiêu** tháng này, kèm thanh tỷ lệ trực quan
+- **Chi tiêu theo danh mục** — 18 danh mục tự động phân loại (SALARY, FOOD, SHOPPING, TRANSPORT...)
+- **Biểu đồ dòng tiền** — xanh cho thu nhập, đỏ cho chi tiêu theo tháng
+- **Danh sách tài khoản/ví** — số dư hiện tại của từng tài khoản
 
 ### Menu (góc trên bên phải)
 
@@ -177,6 +197,26 @@ Header: Authorization: Bearer my-secret-key
 
 ---
 
+## 🏷️ Danh mục tự động (V2)
+
+App tự động phân loại giao dịch vào danh mục dựa trên nội dung. Cấu hình trong `CategoryEngine.kt`:
+
+| Danh mục | Từ khoá | Loại |
+|----------|---------|------|
+| `SALARY` | lương, salary | Thu nhập |
+| `FOOD` | ăn uống, food, cafe, trà sữa | Chi tiêu |
+| `SHOPPING` | mua hàng, shopping, thanh toán | Chi tiêu |
+| `TRANSPORT` | xăng, taxi, grab, xe bus | Chi tiêu |
+| `UTILITIES` | điện, nước, internet, tiền nhà | Chi tiêu |
+| `ENTERTAINMENT` | game, music, netflix, phim | Chi tiêu |
+| `HEALTH` | bệnh viện, thuốc, hospital | Chi tiêu |
+| `EDUCATION` | học phí, tuition, education | Chi tiêu |
+| `INVESTMENT` | đầu tư, chứng khoán | Khác |
+| `TRANSFER` | chuyển tiền, ck | Khác |
+| và 8 danh mục khác... | — | — |
+
+---
+
 ## 🔔 Webhook
 
 Khi có giao dịch mới, server gửi HTTP POST đến URL bạn cấu hình.
@@ -237,7 +277,16 @@ License key được tạo bằng thuật toán RSA-2048, nhúng public key tron
 | MSB | MSB | `com.msb`, `vn.msb` |
 | SHB | SHB | `com.shb`, `vn.shb` |
 
-> 🔄 Đang phát triển thêm các ngân hàng khác. Bạn có thể tự thêm config trong `BankParserRegistry.kt`.
+### Ví điện tử (V2)
+
+| Code | Ví | Gói ứng dụng |
+|------|----|-------------|
+| MOMO | Momo | `com.mservice.momotransfer`, `vn.momo` |
+| ZLP | ZaloPay | `com.zalopay`, `vn.zalopay` |
+| SPAY | ShopeePay | `com.shopee`, `com.shopee.sg` |
+| VNPAY | VNPay | `com.vnpay`, `vn.vnpay` |
+
+> 🔄 Bạn có thể tự thêm config trong `BankParserRegistry.kt`.
 
 ---
 
@@ -260,6 +309,7 @@ License key được tạo bằng thuật toán RSA-2048, nhúng public key tron
 | Paging | Paging 3 (Room PagingSource) |
 | Biometric | AndroidX Biometric (vân tay / Face Unlock) |
 | Minify | R8 full mode (ProGuard) |
+| Finance (V2) | Category engine, Account balance, Cash flow reports |
 
 ### Bảo mật
 - API server chỉ bind **127.0.0.1** (localhost), không expose ra ngoài
@@ -304,6 +354,7 @@ Release APK: `app/build/outputs/apk/release/`
 
 ## 🛠️ Cấu trúc mã nguồn
 
+### V1 — Nhánh `main`
 ```
 app/src/main/java/com/banknotify/
 ├── BankNotifyApp.kt                  # Application (@HiltAndroidApp)
@@ -328,7 +379,7 @@ app/src/main/java/com/banknotify/
 │   ├── BankParser.kt                 # Interface
 │   ├── BankParserConfig.kt           # Config bank
 │   ├── BaseBankParser.kt             # Parser duy nhất (config-driven)
-│   └── BankParserRegistry.kt         # Registry 14 ngân hàng
+│   └── BankParserRegistry.kt         # Registry 14 ngân hàng + 4 ví điện tử
 ├── service/
 │   ├── listener/
 │   │   └── BankNotificationListener.kt   # NotificationListenerService
@@ -351,6 +402,41 @@ app/src/main/java/com/banknotify/
     ├── UpdateInfo.kt                 # Model OTA update
     ├── UpdateManager.kt              # Check + download + install
     └── ApkVerifier.kt               # Xác thực chữ ký APK
+```
+
+### V2 bổ sung — Nhánh `v2`
+```
+core/
+├── CategoryEngine.kt                 # Auto-categorize 18 danh mục
+├── model/
+│   └── Transaction.kt                # + accountType, category, tags, note
+│                                      # + Account entity, CategorySummary,
+│                                      #   CashFlow, AccountBalance
+├── db/
+│   ├── AppDatabase.kt                # + Account entity, v2 migration
+│   ├── TransactionDao.kt             # + AccountDao, category/cash flow queries
+│   └── DatabaseHelper.kt             # + Account/financial report methods
+├── parser/
+│   ├── BankParserConfig.kt           # + accountType field
+│   └── BankParserRegistry.kt         # + Momo, ZaloPay, ShopeePay, VNPay
+ui/
+├── DashboardActivity.kt              # V2: net worth, income/expense, category breakdown
+└── res/layout/item_category_row.xml  # Category bar row
+```
+
+---
+
+## 🌿 Nhánh phát triển
+
+| Nhánh | Trạng thái | Mô tả |
+|-------|-----------|-------|
+| `main` | ✅ Ổn định | V1 — giám sát ngân hàng, API, webhook |
+| `v2` | 🚧 Phát triển | V2 — quản trị tài chính cá nhân, danh mục, ví điện tử |
+
+Sử dụng nhánh `v2` để build bản V2:
+```bash
+git checkout v2
+./gradlew assembleDebug
 ```
 
 ---
