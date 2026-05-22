@@ -6,6 +6,7 @@ import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
 import com.banknotify.core.SecurePrefs
 import com.banknotify.core.db.DatabaseHelper
+import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionFilter
 import com.banknotify.core.model.TransactionStatus
 import com.banknotify.service.webhook.WebhookManager
@@ -40,6 +41,46 @@ private fun Routing.v1Routes(
 ) {
     get("$prefix/health") {
         call.respond(mapOf("success" to true, "status" to "ok", "version" to appConfig.version))
+    }
+
+    post("$prefix/transactions") {
+        val body = call.receiveText()
+        if (body.isBlank()) {
+            call.respond(HttpStatusCode(400, "Bad Request"), mapOf("success" to false, "error" to "Empty body"))
+            return@post
+        }
+        try {
+            val data = gson.fromJson(body, Map::class.java) as? Map<*, *>
+            if (data == null) {
+                call.respond(HttpStatusCode(400, "Bad Request"), mapOf("success" to false, "error" to "Invalid JSON"))
+                return@post
+            }
+            val tx = Transaction(
+                bankCode = (data["bank_code"] as? String) ?: "",
+                bankName = (data["bank_name"] as? String) ?: "",
+                accountNumber = (data["account_number"] as? String) ?: "",
+                amount = (data["amount"] as? Number)?.toDouble() ?: 0.0,
+                balance = (data["balance"] as? Number)?.toDouble(),
+                content = (data["content"] as? String) ?: "",
+                senderName = data["sender_name"] as? String,
+                senderAccount = data["sender_account"] as? String,
+                referenceNumber = data["reference_number"] as? String,
+                transactionDate = (data["transaction_date"] as? Number)?.toLong()
+                    ?: System.currentTimeMillis(),
+                rawMessage = (data["raw_message"] as? String) ?: "",
+                status = (data["status"] as? String)?.let {
+                    try { TransactionStatus.valueOf(it.uppercase()) } catch (_: Exception) { TransactionStatus.PENDING }
+                } ?: TransactionStatus.PENDING,
+                accountType = data["account_type"] as? String,
+                category = data["category"] as? String,
+                tags = data["tags"] as? String,
+                note = data["note"] as? String
+            )
+            val id = dbHelper.insertTransaction(tx)
+            call.respond(mapOf("success" to true, "message" to "Created", "id" to id))
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode(400, "Bad Request"), mapOf("success" to false, "error" to (e.message ?: "Invalid request")))
+        }
     }
 
     get("$prefix/transactions") {
