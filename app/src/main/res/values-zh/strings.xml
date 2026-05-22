@@ -57,6 +57,9 @@
     <string name="webhook_testing">正在测试 Webhook…</string>
     <string name="webhook_test_success">测试成功</string>
     <string name="webhook_test_fail">测试失败</string>
+    <string name="webhook_url_empty">未配置 URL</string>
+    <string name="webhook_enabled_msg">已启用: %s</string>
+    <string name="webhook_disabled_msg">已禁用</string>
 
     <!-- Transaction item -->
     <string name="item_bank">银行</string>

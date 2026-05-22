@@ -12,6 +12,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
+import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
@@ -55,7 +56,7 @@ class ApiRoutesTest {
 
     private fun TestApplicationBuilder.configureApp() {
         application {
-            this.install(ContentNegotiation) { gson { } }
+            install(ContentNegotiation) { gson { } }
             routing {
                 apiRoutes(dbHelper, webhookManager, updateManager, appConfig, context, gson) { 8765 }
             }

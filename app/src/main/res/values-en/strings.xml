@@ -57,6 +57,9 @@
     <string name="webhook_testing">Testing webhook…</string>
     <string name="webhook_test_success">Test successful</string>
     <string name="webhook_test_fail">Test failed</string>
+    <string name="webhook_url_empty">No URL configured</string>
+    <string name="webhook_enabled_msg">Enabled: %s</string>
+    <string name="webhook_disabled_msg">Disabled</string>
 
     <!-- Transaction item -->
     <string name="item_bank">Bank</string>
