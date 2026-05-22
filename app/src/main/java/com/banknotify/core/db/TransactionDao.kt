@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.banknotify.core.model.Account
+import com.banknotify.core.model.AccountBalance
 import com.banknotify.core.model.CategorySummary
 import com.banknotify.core.model.CashFlow
 import com.banknotify.core.model.MonthlyStat
