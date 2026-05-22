@@ -19,13 +19,13 @@ interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE id = :id")
     fun getById(id: Long): Transaction?
 
-    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC, id DESC LIMIT :limit OFFSET :offset")
     fun getRecent(limit: Int, offset: Int): List<Transaction>
 
-    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC LIMIT :limit OFFSET :offset")
+    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC, id DESC LIMIT :limit OFFSET :offset")
     fun observeRecent(limit: Int, offset: Int): Flow<List<Transaction>>
 
-    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC")
+    @Query("SELECT * FROM transactions ORDER BY transaction_date DESC, id DESC")
     fun getPagingSource(): PagingSource<Int, Transaction>
 
     @Query("SELECT COUNT(*) FROM transactions WHERE status = 'PENDING'")
@@ -38,7 +38,7 @@ interface TransactionDao {
     fun observeTotalAmount(): Flow<Double>
 
     @Query("UPDATE transactions SET status = :status WHERE id = :id")
-    fun updateStatus(id: Long, status: TransactionStatus)
+    fun updateStatus(id: Long, status: TransactionStatus): Int
 
     @Query("DELETE FROM transactions WHERE id = :id")
     fun deleteById(id: Long)
