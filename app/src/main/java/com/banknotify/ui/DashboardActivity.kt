@@ -5,6 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.banknotify.core.db.DatabaseHelper
+import com.banknotify.R
 import com.banknotify.databinding.ActivityDashboardBinding
 import com.banknotify.ui.view.SimpleBarChart
 import dagger.hilt.android.AndroidEntryPoint
