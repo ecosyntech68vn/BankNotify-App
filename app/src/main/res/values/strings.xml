@@ -159,6 +159,10 @@
     <!-- Export -->
     <string name="menu_export">Xuất dữ liệu</string>
 
+    <!-- Onboarding -->
+    <string name="btn_grant">Cấp quyền</string>
+    <string name="btn_skip">Để sau</string>
+
     <!-- Dashboard -->
     <string name="menu_dashboard">Bảng điều khiển</string>
     <string name="dashboard_this_month">Tháng này</string>
