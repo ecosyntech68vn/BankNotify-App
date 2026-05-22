@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.banknotify.core.model.MonthlyStat
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionStatus
 import kotlinx.coroutines.flow.Flow
