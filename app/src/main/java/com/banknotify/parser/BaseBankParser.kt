@@ -29,12 +29,13 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
             senderName = sender,
             referenceNumber = ref,
             transactionDate = date,
-            rawMessage = text
+            rawMessage = text,
+            accountType = config.accountType
         )
     }
 
     private fun extractAmount(t: String): Double? {
-        val p = Regex("""([+-]?[\d,]+(?:\.\d+)?)\s*VND""", RegexOption.IGNORE_CASE)
+        val p = Regex("""([+-]?[\d,]+(?:\.\d+)?)\s*(?:VND|đ)""", RegexOption.IGNORE_CASE)
         return p.find(t)?.let { parseAmount(it.groupValues[1]) }
     }
 
@@ -54,7 +55,7 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
     }
 
     private fun extractBalance(t: String): Double? {
-        val p = Regex("""(?:SD|số dư|so du)[:\s]*([+-]?[\d,]+(?:\.\d+)?)\s*VND""", RegexOption.IGNORE_CASE)
+        val p = Regex("""(?:SD|số dư|so du|số dư|vi?́)[:\s]*([+-]?[\d,]+(?:\.\d+)?)\s*(?:VND|đ)""", RegexOption.IGNORE_CASE)
         return p.find(t)?.let { parseAmount(it.groupValues[1]) }
     }
 

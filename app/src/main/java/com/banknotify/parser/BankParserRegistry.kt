@@ -18,7 +18,11 @@ object BankParserRegistry {
         BankParserConfig("HDB", "HDBank", listOf("com.hdbank", "vn.hdbank", "com.hdbank.app"), listOf("HDBank", "HDB")),
         BankParserConfig("OCB", "OCB", listOf("com.ocb", "vn.ocb", "com.ocb.app", "com.ocb.ocbapp"), listOf("OCB")),
         BankParserConfig("MSB", "MSB", listOf("com.msb", "vn.msb", "com.msb.app"), listOf("MSB")),
-        BankParserConfig("SHB", "SHB", listOf("com.shb", "vn.shb", "com.shb.app"), listOf("SHB"))
+        BankParserConfig("SHB", "SHB", listOf("com.shb", "vn.shb", "com.shb.app"), listOf("SHB")),
+        BankParserConfig("MOMO", "Momo", listOf("com.mservice.momotransfer", "com.mservice.momotransfer", "vn.momo"), listOf("Momo", "Ví MoMo"), accountType = "EWALLET"),
+        BankParserConfig("ZLP", "ZaloPay", listOf("com.zalopay", "vn.zalopay", "com.zion.app"), listOf("ZaloPay", "Zalo Pay"), accountType = "EWALLET"),
+        BankParserConfig("SPAY", "ShopeePay", listOf("com.shopee", "com.shopee.shopee", "com.shopee.sg"), listOf("ShopeePay", "Shopee Pay", "AirPay"), accountType = "EWALLET"),
+        BankParserConfig("VNPAY", "VNPay", listOf("com.vnpay", "vn.vnpay", "com.vnpay.vnpay"), listOf("VNPay", "VN Pay"), accountType = "EWALLET")
     )
 
     private val parsers: List<BankParser> = configs.map { BaseBankParser(it) }
