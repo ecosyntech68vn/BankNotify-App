@@ -55,7 +55,7 @@ class ApiRoutesTest {
 
     private fun TestApplicationBuilder.configureApp() {
         application {
-            install(ContentNegotiation) { gson { } }
+            this.install(ContentNegotiation) { gson { } }
             routing {
                 apiRoutes(dbHelper, webhookManager, updateManager, appConfig, context, gson) { 8765 }
             }

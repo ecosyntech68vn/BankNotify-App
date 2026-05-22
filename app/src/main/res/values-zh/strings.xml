@@ -54,6 +54,9 @@
     <string name="webhook_test">测试</string>
     <string name="webhook_save">保存</string>
     <string name="webhook_url_required">请输入 Webhook URL</string>
+    <string name="webhook_testing">正在测试 Webhook…</string>
+    <string name="webhook_test_success">测试成功</string>
+    <string name="webhook_test_fail">测试失败</string>
 
     <!-- Transaction item -->
     <string name="item_bank">银行</string>

@@ -34,6 +34,7 @@ class DatabaseHelperTest {
         content: String = "Chuyen tien",
         senderName: String? = "Nguyen Van A",
         referenceNumber: String? = "REF123",
+        transactionDate: Long = System.currentTimeMillis(),
         status: TransactionStatus = TransactionStatus.PENDING
     ) = Transaction(
         bankCode = bankCode,
@@ -45,6 +46,7 @@ class DatabaseHelperTest {
         senderName = senderName,
         referenceNumber = referenceNumber,
         rawMessage = "raw $content",
+        transactionDate = transactionDate,
         status = status
     )
 

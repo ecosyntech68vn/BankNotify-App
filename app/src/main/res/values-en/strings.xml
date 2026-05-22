@@ -54,6 +54,9 @@
     <string name="webhook_test">Test</string>
     <string name="webhook_save">Save</string>
     <string name="webhook_url_required">Please enter a webhook URL</string>
+    <string name="webhook_testing">Testing webhook…</string>
+    <string name="webhook_test_success">Test successful</string>
+    <string name="webhook_test_fail">Test failed</string>
 
     <!-- Transaction item -->
     <string name="item_bank">Bank</string>
