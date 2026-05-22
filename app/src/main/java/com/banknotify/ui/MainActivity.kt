@@ -50,14 +50,15 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
-        checkLicense()
-        checkBiometric()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
         setSupportActionBar(b.toolbar)
         supportActionBar?.title = getString(R.string.app_name)
+
+        checkLicense()
+        checkBiometric()
 
         adapter = TransactionAdapter { tx -> showDetail(tx) }
         b.recyclerTransactions.layoutManager = LinearLayoutManager(this)
