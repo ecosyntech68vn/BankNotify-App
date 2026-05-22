@@ -5,6 +5,9 @@
     <string name="notification_listener_description">允许BankNotify读取银行应用的通知以进行支付验证</string>
     <string name="accessibility_service_name">BankNotify - 无障碍</string>
     <string name="accessibility_service_desc">允许 BankNotify 通过无障碍服务读取银行通知（适用于 MIUI/HyperOS）</string>
+    <string name="accessibility_switch">启用无障碍以读取通知</string>
+    <string name="accessibility_enabled">无障碍已启用</string>
+    <string name="accessibility_disabled">无障碍未启用</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome">欢迎使用 BankNotify</string>
