@@ -168,6 +168,14 @@
     <string name="dashboard_this_month">Tháng này</string>
     <string name="dashboard_trend">Xu hướng</string>
     <string name="dashboard_all_time">Tổng quan</string>
+    <string name="dashboard_net_worth">Tổng tài sản</string>
+    <string name="dashboard_income_title">Thu nhập</string>
+    <string name="dashboard_expense_title">Chi tiêu</string>
+    <string name="dashboard_income_vs_expense">Thu — Chi</string>
+    <string name="dashboard_expense_by_category">Chi tiêu theo danh mục</string>
+    <string name="dashboard_accounts">Tài khoản &amp; Ví</string>
+    <string name="dashboard_no_category_data">Chưa có dữ liệu danh mục</string>
+    <string name="dashboard_category_other">Khác</string>
 
     <!-- Biometric -->
     <string name="biometric_title">Mở khoá BankNotify</string>

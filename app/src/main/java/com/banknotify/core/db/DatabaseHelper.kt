@@ -3,6 +3,10 @@ package com.banknotify.core.db
 import android.content.Context
 import androidx.paging.PagingSource
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.banknotify.core.model.Account
+import com.banknotify.core.model.AccountBalance
+import com.banknotify.core.model.CashFlow
+import com.banknotify.core.model.CategorySummary
 import com.banknotify.core.model.MonthlyStat
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionFilter
@@ -13,6 +17,7 @@ class DatabaseHelper(private val context: Context) {
 
     private val db = AppDatabase.getInstance(context)
     private val dao = db.transactionDao()
+    private val accountDao = db.accountDao()
 
     fun insertTransaction(tx: Transaction): Long = dao.insert(tx)
 
@@ -50,6 +55,10 @@ class DatabaseHelper(private val context: Context) {
 
     fun updateStatus(id: Long, status: TransactionStatus) = dao.updateStatus(id, status)
 
+    fun updateCategory(id: Long, category: String) = dao.updateCategory(id, category)
+
+    fun updateNote(id: Long, note: String) = dao.updateNote(id, note)
+
     fun getTransactionByReference(ref: String): Transaction? = dao.getByReference(ref)
 
     fun getUnreadCount(): Int = dao.getUnreadCount()
@@ -84,6 +93,80 @@ class DatabaseHelper(private val context: Context) {
 
     fun getAmountSince(since: Long): Double = dao.getAmountSince(since)
 
+    fun getCategorySummaries(): List<CategorySummary> = dao.getCategorySummaries()
+
+    fun getIncomeByCategory(): List<CategorySummary> = dao.getIncomeByCategory()
+
+    fun getExpenseByCategory(): List<CategorySummary> = dao.getExpenseByCategory()
+
+    fun getMonthlyCashFlow(): List<CashFlow> = dao.getMonthlyCashFlow()
+
+    fun getBalancesByType(): List<AccountBalance> = dao.getBalancesByType()
+
+    fun getIncomeThisMonth(): Double {
+        val start = monthStart()
+        val sqldb = db.openHelper.writableDatabase
+        val cursor = sqldb.query(SimpleSQLiteQuery(
+            "SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE amount > 0 AND transaction_date >= ?",
+            arrayOf(start.toString())
+        ))
+        cursor.moveToFirst()
+        val result = cursor.getDouble(0)
+        cursor.close()
+        return result
+    }
+
+    fun getExpenseThisMonth(): Double {
+        val start = monthStart()
+        val sqldb = db.openHelper.writableDatabase
+        val cursor = sqldb.query(SimpleSQLiteQuery(
+            "SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE amount < 0 AND transaction_date >= ?",
+            arrayOf(start.toString())
+        ))
+        cursor.moveToFirst()
+        val result = cursor.getDouble(0)
+        cursor.close()
+        return result
+    }
+
+    fun getIncomeThisMonthCount(): Int {
+        val start = monthStart()
+        val sqldb = db.openHelper.writableDatabase
+        val cursor = sqldb.query(SimpleSQLiteQuery(
+            "SELECT COUNT(*) FROM transactions WHERE amount > 0 AND transaction_date >= ?",
+            arrayOf(start.toString())
+        ))
+        cursor.moveToFirst()
+        val result = cursor.getInt(0)
+        cursor.close()
+        return result
+    }
+
+    fun getExpenseThisMonthCount(): Int {
+        val start = monthStart()
+        val sqldb = db.openHelper.writableDatabase
+        val cursor = sqldb.query(SimpleSQLiteQuery(
+            "SELECT COUNT(*) FROM transactions WHERE amount < 0 AND transaction_date >= ?",
+            arrayOf(start.toString())
+        ))
+        cursor.moveToFirst()
+        val result = cursor.getInt(0)
+        cursor.close()
+        return result
+    }
+
+    fun getTotalAssets(): Double = accountDao.getTotalAssets()
+
+    fun getAccounts(): List<Account> = accountDao.getAll()
+
+    fun getAccountsByType(type: String): List<Account> = accountDao.getByType(type)
+
+    fun insertAccount(account: Account): Long = accountDao.insert(account)
+
+    fun updateAccountBalance(id: Long, balance: Double) = accountDao.updateBalance(id, balance)
+
+    fun updateAccountOpeningBalance(id: Long, balance: Double) = accountDao.updateOpeningBalance(id, balance)
+
     private fun buildFilterQuery(filter: TransactionFilter): FilterQuery {
         val conditions = mutableListOf<String>()
         val args = mutableListOf<String>()
@@ -95,6 +178,8 @@ class DatabaseHelper(private val context: Context) {
         filter.minAmount?.let { conditions.add("amount >= ?"); args.add(it.toString()) }
         filter.maxAmount?.let { conditions.add("amount <= ?"); args.add(it.toString()) }
         filter.searchContent?.let { conditions.add("content LIKE ?"); args.add("%$it%") }
+        filter.accountType?.let { conditions.add("account_type = ?"); args.add(it) }
+        filter.category?.let { conditions.add("category = ?"); args.add(it) }
 
         val where = if (conditions.isNotEmpty()) "WHERE ${conditions.joinToString(" AND ")}" else ""
         return FilterQuery(where, args.toTypedArray())
@@ -113,8 +198,22 @@ class DatabaseHelper(private val context: Context) {
         referenceNumber = c.getString(c.getColumnIndexOrThrow("reference_number")),
         transactionDate = c.getLong(c.getColumnIndexOrThrow("transaction_date")),
         rawMessage = c.getString(c.getColumnIndexOrThrow("raw_message")),
-        status = TransactionStatus.valueOf(c.getString(c.getColumnIndexOrThrow("status")))
+        status = TransactionStatus.valueOf(c.getString(c.getColumnIndexOrThrow("status"))),
+        accountType = c.getString(c.getColumnIndexOrThrow("account_type")),
+        category = c.getString(c.getColumnIndexOrThrow("category")),
+        tags = c.getString(c.getColumnIndexOrThrow("tags")),
+        note = c.getString(c.getColumnIndexOrThrow("note"))
     )
+
+    private fun monthStart(): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.set(java.util.Calendar.DAY_OF_MONTH, 1)
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        cal.set(java.util.Calendar.MINUTE, 0)
+        cal.set(java.util.Calendar.SECOND, 0)
+        cal.set(java.util.Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
+    }
 
     private data class FilterQuery(val where: String, val args: Array<String>)
 }

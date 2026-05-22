@@ -11,6 +11,39 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Net Worth -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dashboard_net_worth"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/net_worth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="0 VND"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Income vs Expense this month -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +60,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/dashboard_this_month"
+                    android:text="@string/dashboard_income_vs_expense"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -45,19 +78,34 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/month_count"
+                            android:id="@+id/income_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="28sp"
+                            android:text="0 VND"
+                            android:textColor="#FF4CAF50"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/income_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 GD"
+                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/stats_transactions"
-                            android:textSize="12sp" />
+                            android:layout_marginTop="2dp"
+                            android:text="@string/dashboard_income_title"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="?attr/colorOutline" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -67,24 +115,85 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/month_amount"
+                            android:id="@+id/expense_amount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0 VND"
+                            android:textColor="#FFF44336"
                             android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/expense_count"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/stats_total_amount"
+                            android:text="0 GD"
                             android:textSize="12sp" />
-                    </LinearLayout>
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/dashboard_expense_title"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:id="@+id/income_bar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="#FF4CAF50" />
+
+                    <View
+                        android:id="@+id/expense_bar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="#FFF44336" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Expense by Category -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/category_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dashboard_expense_by_category"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/category_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Monthly cash flow chart -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,9 +222,13 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Accounts & Wallets -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/account_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone"
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp">
 
@@ -128,61 +241,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/dashboard_all_time"
+                    android:text="@string/dashboard_accounts"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/account_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/all_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/stats_transactions"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/all_amount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0 VND"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/stats_total_amount"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                </LinearLayout>
+                    android:orientation="vertical" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
