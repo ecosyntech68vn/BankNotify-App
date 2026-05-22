@@ -35,6 +35,8 @@ data class MonthlyStat(
     val count: Int,
     val total: Double
 )
+
+data class TransactionFilter(
     val bankCode: String? = null,
     val status: TransactionStatus? = null,
     val fromDate: Long? = null,
