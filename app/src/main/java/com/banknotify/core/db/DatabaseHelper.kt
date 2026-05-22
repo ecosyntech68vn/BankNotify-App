@@ -2,6 +2,7 @@ package com.banknotify.core.db
 
 import android.content.Context
 import androidx.paging.PagingSource
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.banknotify.core.model.MonthlyStat
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionFilter
@@ -21,10 +22,10 @@ class DatabaseHelper(private val context: Context) {
         val query = buildFilterQuery(filter)
         val sqldb = db.openHelper.writableDatabase
         val args = query.args + arrayOf(filter.limit.toString(), filter.offset.toString())
-        val cursor = sqldb.rawQuery(
+        val cursor = sqldb.query(SimpleSQLiteQuery(
             "SELECT * FROM transactions ${query.where} ORDER BY transaction_date DESC LIMIT ? OFFSET ?",
             args
-        )
+        ))
         val result = mutableListOf<Transaction>()
         while (cursor.moveToNext()) {
             result.add(cursorToTransaction(cursor))
@@ -69,8 +70,8 @@ class DatabaseHelper(private val context: Context) {
 
     fun getMonthlyStats(): List<MonthlyStat> {
         val sqldb = db.openHelper.writableDatabase
-        val cursor = sqldb.rawQuery(
-            "SELECT strftime('%Y-%m', transaction_date / 1000, 'unixepoch') as month, COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM transactions GROUP BY month ORDER BY month DESC LIMIT 12", null)
+        val cursor = sqldb.query(SimpleSQLiteQuery(
+            "SELECT strftime('%Y-%m', transaction_date / 1000, 'unixepoch') as month, COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM transactions GROUP BY month ORDER BY month DESC LIMIT 12"))
         val result = mutableListOf<MonthlyStat>()
         while (cursor.moveToNext()) {
             result.add(MonthlyStat(cursor.getString(0), cursor.getInt(1), cursor.getDouble(2)))
