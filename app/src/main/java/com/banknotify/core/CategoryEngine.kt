@@ -6,7 +6,7 @@ object CategoryEngine {
 
     private data class Rule(
         val keywords: List<String>,
-        val category: String,
+        val category: String?,
         val isIncome: Boolean? = null
     )
 

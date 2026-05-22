@@ -11,6 +11,10 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import com.banknotify.R
 import com.banknotify.core.db.DatabaseHelper
+import com.banknotify.core.model.Account
+import com.banknotify.core.model.CashFlow
+import com.banknotify.core.model.CategorySummary
+import com.banknotify.core.model.MonthlyStat
 import com.banknotify.databinding.ActivityDashboardBinding
 import com.banknotify.ui.view.SimpleBarChart
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,10 +51,7 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun loadData() {
         lifecycleScope.launch {
-            val (
-                netWorth, incomeAmt, expenseAmt, incomeCnt, expenseCnt,
-                cashFlows, categories, accounts, monthlyStats
-            ) = withContext(Dispatchers.IO) {
+            val data = withContext(Dispatchers.IO) {
                 val cal = Calendar.getInstance()
                 cal.set(Calendar.DAY_OF_MONTH, 1)
                 cal.set(Calendar.HOUR_OF_DAY, 0)
@@ -58,24 +59,24 @@ class DashboardActivity : AppCompatActivity() {
                 cal.set(Calendar.SECOND, 0)
                 cal.set(Calendar.MILLISECOND, 0)
 
-                val nw = dbHelper.getTotalAssets()
-                val ia = dbHelper.getIncomeThisMonth()
-                val ea = dbHelper.getExpenseThisMonth()
-                val ic = dbHelper.getIncomeThisMonthCount()
-                val ec = dbHelper.getExpenseThisMonthCount()
-                val cf = dbHelper.getMonthlyCashFlow()
-                val cat = dbHelper.getExpenseByCategory()
-                val acc = dbHelper.getAccounts()
-                val ms = dbHelper.getMonthlyStats()
-
-                arrayOf(nw, ia, ea, ic.toDouble(), ec.toDouble(), cf, cat, acc, ms)
+                DashboardData(
+                    netWorth = dbHelper.getTotalAssets(),
+                    incomeAmt = dbHelper.getIncomeThisMonth(),
+                    expenseAmt = dbHelper.getExpenseThisMonth(),
+                    incomeCnt = dbHelper.getIncomeThisMonthCount(),
+                    expenseCnt = dbHelper.getExpenseThisMonthCount(),
+                    cashFlows = dbHelper.getMonthlyCashFlow(),
+                    categories = dbHelper.getExpenseByCategory(),
+                    accounts = dbHelper.getAccounts(),
+                    monthlyStats = dbHelper.getMonthlyStats()
+                )
             }
 
-            val nw = netWorth as Double
-            val ia = incomeAmt as Double
-            val ea = expenseAmt as Double
-            val ic = (incomeCnt as Double).toInt()
-            val ec = (expenseCnt as Double).toInt()
+            val nw = data.netWorth
+            val ia = data.incomeAmt
+            val ea = data.expenseAmt
+            val ic = data.incomeCnt
+            val ec = data.expenseCnt
 
             b.netWorth.text = "${formatMoney(nw)} VND"
 
@@ -93,8 +94,7 @@ class DashboardActivity : AppCompatActivity() {
                 b.expenseBar.layoutParams = rp
             }
 
-            @Suppress("UNCHECKED_CAST")
-            val cats = categories as List<com.banknotify.core.model.CategorySummary>
+            val cats = data.categories
             if (cats.isNotEmpty()) {
                 b.categoryCard.visibility = android.view.View.VISIBLE
                 b.categoryList.removeAllViews()
@@ -114,8 +114,7 @@ class DashboardActivity : AppCompatActivity() {
                 }
             }
 
-            @Suppress("UNCHECKED_CAST")
-            val accs = accounts as List<com.banknotify.core.model.Account>
+            val accs = data.accounts
             if (accs.isNotEmpty()) {
                 b.accountCard.visibility = android.view.View.VISIBLE
                 b.accountList.removeAllViews()
@@ -143,8 +142,7 @@ class DashboardActivity : AppCompatActivity() {
                 }
             }
 
-            @Suppress("UNCHECKED_CAST")
-            val cfList = cashFlows as List<com.banknotify.core.model.CashFlow>
+            val cfList = data.cashFlows
             if (cfList.isNotEmpty()) {
                 val bars = cfList.take(12).map { cf ->
                     val net = cf.net.toFloat()
@@ -153,8 +151,7 @@ class DashboardActivity : AppCompatActivity() {
                 }
                 b.barChart.bars = bars
             } else {
-                @Suppress("UNCHECKED_CAST")
-                val msList = monthlyStats as List<com.banknotify.core.model.MonthlyStat>
+                val msList = data.monthlyStats
                 val colors = arrayOf(
                     0xFF4CAF50.toInt(), 0xFF2196F3.toInt(), 0xFFFF9800.toInt(),
                     0xFFE91E63.toInt(), 0xFF9C27B0.toInt(), 0xFF00BCD4.toInt(),
@@ -193,3 +190,15 @@ class DashboardActivity : AppCompatActivity() {
         else -> cat
     }
 }
+
+private data class DashboardData(
+    val netWorth: Double,
+    val incomeAmt: Double,
+    val expenseAmt: Double,
+    val incomeCnt: Int,
+    val expenseCnt: Int,
+    val cashFlows: List<CashFlow>,
+    val categories: List<CategorySummary>,
+    val accounts: List<Account>,
+    val monthlyStats: List<MonthlyStat>
+)
