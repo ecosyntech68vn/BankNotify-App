@@ -155,4 +155,7 @@
     <string name="license_deactivated">Đã huỷ kích hoạt</string>
     <string name="btn_activate">Kích hoạt</string>
     <string name="btn_deactivate">Huỷ kích hoạt</string>
+
+    <!-- Export -->
+    <string name="menu_export">Xuất dữ liệu</string>
 </resources>

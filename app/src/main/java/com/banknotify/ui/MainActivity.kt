@@ -12,6 +12,7 @@ import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.export.DataExporter
 import com.banknotify.core.license.LicenseManager
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionStatus
@@ -110,6 +111,7 @@ class MainActivity : AppCompatActivity() {
             com.banknotify.R.id.action_about -> { showAbout(); true }
             com.banknotify.R.id.action_api_docs -> { showApiDocs(); true }
             com.banknotify.R.id.action_license -> { showLicenseActivationDialog(); true }
+            com.banknotify.R.id.action_export -> { showExportDialog(); true }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -247,6 +249,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun openPermissionSettings() {
         startActivity(android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+
+    private fun showExportDialog() {
+        val items = arrayOf("JSON", "CSV")
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.menu_export))
+            .setItems(items) { _, which ->
+                val file = if (which == 0) DataExporter.exportJson(this, dbHelper) else DataExporter.exportCsv(this, dbHelper)
+                val mime = if (which == 0) "application/json" else "text/csv"
+                DataExporter.shareFile(this, file, mime)
+            }.show()
     }
 
     private fun checkLicense() {

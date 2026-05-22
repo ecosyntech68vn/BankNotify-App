@@ -151,4 +151,7 @@
     <string name="license_deactivated">Deactivated</string>
     <string name="btn_activate">Activate</string>
     <string name="btn_deactivate">Deactivate</string>
+
+    <!-- Export -->
+    <string name="menu_export">Export Data</string>
 </resources>

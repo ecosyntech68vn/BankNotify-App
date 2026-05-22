@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <cache-path name="updates" path="updates/" />
+    <cache-path name="exports" path="transactions_export.json" />
+    <cache-path name="exports_csv" path="transactions_export.csv" />
 </paths>
