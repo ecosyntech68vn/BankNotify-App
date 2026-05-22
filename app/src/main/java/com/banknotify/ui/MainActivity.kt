@@ -12,6 +12,7 @@ import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.biometric.BiometricLock
 import com.banknotify.core.export.DataExporter
 import com.banknotify.core.license.LicenseManager
 import com.banknotify.core.model.Transaction
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         checkLicense()
+        checkBiometric()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
@@ -62,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         b.cardPermissions.setOnClickListener { openPermissionSettings() }
         b.cardWebhook.setOnClickListener { startActivity(android.content.Intent(this, WebhookSettingsActivity::class.java)) }
-        b.cardStats.setOnClickListener { refresh() }
+        b.cardStats.setOnClickListener { startActivity(android.content.Intent(this, DashboardActivity::class.java)) }
         b.cardClear.setOnClickListener { showClearDialog() }
         b.cardUpdate.setOnClickListener { showUpdateDialog() }
 
@@ -110,8 +112,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             com.banknotify.R.id.action_about -> { showAbout(); true }
             com.banknotify.R.id.action_api_docs -> { showApiDocs(); true }
-            com.banknotify.R.id.action_license -> { showLicenseActivationDialog(); true }
             com.banknotify.R.id.action_export -> { showExportDialog(); true }
+            com.banknotify.R.id.action_dashboard -> { startActivity(android.content.Intent(this, DashboardActivity::class.java)); true }
+            com.banknotify.R.id.action_security -> { showSecurityDialog(); true }
+            com.banknotify.R.id.action_license -> { showLicenseActivationDialog(); true }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -177,10 +181,6 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
         b.serverPortText.text = getString(R.string.server_port, prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT))
         b.serverSwitch.isChecked = ApiServerService.isRunning
-    }
-
-    private fun refresh() {
-        Toast.makeText(this, getString(R.string.refreshed), Toast.LENGTH_SHORT).show()
     }
 
     private fun showClearDialog() {
@@ -249,6 +249,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun openPermissionSettings() {
         startActivity(android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+
+    private fun checkBiometric() {
+        if (!BiometricLock.isEnabled(this)) return
+        BiometricLock.authenticate(this,
+            getString(R.string.biometric_title),
+            getString(R.string.biometric_subtitle)) { }
+    }
+
+    private fun showSecurityDialog() {
+        val enabled = BiometricLock.isEnabled(this)
+        if (!BiometricLock.isSupported(this)) {
+            Toast.makeText(this, getString(R.string.biometric_not_supported), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (enabled) {
+            BiometricLock.setEnabled(this, false)
+            Toast.makeText(this, getString(R.string.biometric_disabled), Toast.LENGTH_SHORT).show()
+        } else {
+            BiometricLock.authenticate(this,
+                getString(R.string.biometric_enable_title),
+                getString(R.string.biometric_enable_subtitle)) {
+                BiometricLock.setEnabled(this, true)
+                Toast.makeText(this, getString(R.string.biometric_enabled), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun showExportDialog() {

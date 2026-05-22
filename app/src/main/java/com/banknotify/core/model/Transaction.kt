@@ -30,7 +30,11 @@ enum class TransactionStatus {
     FAILED
 }
 
-data class TransactionFilter(
+data class MonthlyStat(
+    val month: String,
+    val count: Int,
+    val total: Double
+)
     val bankCode: String? = null,
     val status: TransactionStatus? = null,
     val fromDate: Long? = null,

@@ -75,5 +75,10 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <activity
+            android:name=".ui.DashboardActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.MainActivity" />
+
     </application>
 </manifest>

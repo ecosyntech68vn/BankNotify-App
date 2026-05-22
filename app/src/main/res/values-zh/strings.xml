@@ -154,4 +154,20 @@
 
     <!-- Export -->
     <string name="menu_export">导出数据</string>
+
+    <!-- Dashboard -->
+    <string name="menu_dashboard">仪表盘</string>
+    <string name="dashboard_this_month">本月</string>
+    <string name="dashboard_trend">趋势</string>
+    <string name="dashboard_all_time">总计</string>
+
+    <!-- Security -->
+    <string name="menu_security">安全</string>
+    <string name="biometric_title">解锁 BankNotify</string>
+    <string name="biometric_subtitle">验证以继续</string>
+    <string name="biometric_enable_title">启用生物识别锁</string>
+    <string name="biometric_enable_subtitle">验证以启用此功能</string>
+    <string name="biometric_enabled">生物识别锁已启用</string>
+    <string name="biometric_disabled">生物识别锁已禁用</string>
+    <string name="biometric_not_supported">设备不支持生物识别</string>
 </resources>

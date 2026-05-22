@@ -56,4 +56,13 @@ interface TransactionDao {
 
     @Query("SELECT COALESCE(SUM(amount), 0) FROM transactions")
     fun getTotalAmount(): Double
+
+    @Query("SELECT strftime('%Y-%m', transaction_date / 1000, 'unixepoch') as month, COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM transactions GROUP BY month ORDER BY month DESC LIMIT 12")
+    fun observeMonthlyStats(): Flow<List<MonthlyStat>>
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE transaction_date >= :since")
+    fun getCountSince(since: Long): Int
+
+    @Query("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE transaction_date >= :since")
+    fun getAmountSince(since: Long): Double
 }

@@ -3,6 +3,7 @@ package com.banknotify.core.db
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.paging.PagingSource
+import com.banknotify.core.model.MonthlyStat
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionFilter
 import com.banknotify.core.model.TransactionStatus
@@ -65,6 +66,25 @@ class DatabaseHelper(private val context: Context) {
     }
 
     fun deleteTransaction(id: Long) = dao.deleteById(id)
+
+    fun observeMonthlyStats(): Flow<List<MonthlyStat>> = dao.observeMonthlyStats()
+
+    fun getMonthlyStats(): List<MonthlyStat> {
+        val dbPath = context.getDatabasePath("banknotify.db").path
+        val sqldb = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY)
+        val cursor = sqldb.rawQuery(
+            "SELECT strftime('%Y-%m', transaction_date / 1000, 'unixepoch') as month, COUNT(*) as count, COALESCE(SUM(amount), 0) as total FROM transactions GROUP BY month ORDER BY month DESC LIMIT 12", null)
+        val result = mutableListOf<MonthlyStat>()
+        while (cursor.moveToNext()) {
+            result.add(MonthlyStat(cursor.getString(0), cursor.getInt(1), cursor.getDouble(2)))
+        }
+        cursor.close()
+        return result
+    }
+
+    fun getCountSince(since: Long): Int = dao.getCountSince(since)
+
+    fun getAmountSince(since: Long): Double = dao.getAmountSince(since)
 
     private fun buildFilterQuery(filter: TransactionFilter): FilterQuery {
         val conditions = mutableListOf<String>()

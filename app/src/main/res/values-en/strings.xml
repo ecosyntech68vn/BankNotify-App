@@ -154,4 +154,20 @@
 
     <!-- Export -->
     <string name="menu_export">Export Data</string>
+
+    <!-- Dashboard -->
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="dashboard_this_month">This Month</string>
+    <string name="dashboard_trend">Trend</string>
+    <string name="dashboard_all_time">All Time</string>
+
+    <!-- Security -->
+    <string name="menu_security">Security</string>
+    <string name="biometric_title">Unlock BankNotify</string>
+    <string name="biometric_subtitle">Authenticate to continue</string>
+    <string name="biometric_enable_title">Enable biometric lock</string>
+    <string name="biometric_enable_subtitle">Authenticate to enable this feature</string>
+    <string name="biometric_enabled">Biometric lock enabled</string>
+    <string name="biometric_disabled">Biometric lock disabled</string>
+    <string name="biometric_not_supported">Device does not support biometrics</string>
 </resources>

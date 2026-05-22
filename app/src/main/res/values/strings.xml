@@ -158,4 +158,22 @@
 
     <!-- Export -->
     <string name="menu_export">Xuất dữ liệu</string>
+
+    <!-- Dashboard -->
+    <string name="menu_dashboard">Bảng điều khiển</string>
+    <string name="dashboard_this_month">Tháng này</string>
+    <string name="dashboard_trend">Xu hướng</string>
+    <string name="dashboard_all_time">Tổng quan</string>
+
+    <!-- Biometric -->
+    <string name="biometric_title">Mở khoá BankNotify</string>
+    <string name="biometric_subtitle">Xác thực để tiếp tục</string>
+
+    <!-- Security -->
+    <string name="menu_security">Bảo mật</string>
+    <string name="biometric_enable_title">Bật khoá sinh trắc học</string>
+    <string name="biometric_enable_subtitle">Xác thực để bật tính năng này</string>
+    <string name="biometric_enabled">Đã bật khoá sinh trắc học</string>
+    <string name="biometric_disabled">Đã tắt khoá sinh trắc học</string>
+    <string name="biometric_not_supported">Thiết bị không hỗ trợ sinh trắc học</string>
 </resources>
