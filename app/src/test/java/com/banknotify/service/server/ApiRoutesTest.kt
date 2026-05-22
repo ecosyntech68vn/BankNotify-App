@@ -69,36 +69,36 @@ class ApiRoutesTest {
             client.get(path).apply {
                 assertEquals(HttpStatusCode.OK, status)
                 val body = bodyAsText()
-                assertContains(body, ""success"":true")
-                assertContains(body, ""status"":""ok""")
-                assertContains(body, ""version"":""1.0.0""")
+                assertContains(body, "\"success\":true")
+                assertContains(body, "\"status\":\"ok\"")
+                assertContains(body, "\"version\":\"1.0.0\"")
             }
         }
     }
 
     @Test
     fun `transactions endpoint returns data`() = testApplication {
-        val tx = Transaction(id = 1, bankCode = "TEST", content = "test", amount = 100.0, date = 1000L, status = TransactionStatus.PENDING)
+        val tx = Transaction(id = 1, bankCode = "TEST", bankName = "Test", accountNumber = "0001", content = "test", amount = 100.0, rawMessage = "test|100000||Test|", transactionDate = 1000L, status = TransactionStatus.PENDING)
         `when`(dbHelper.getTransactions(any())).thenReturn(listOf(tx))
 
         configureApp()
         client.get("/api/v1/transactions").apply {
             assertEquals(HttpStatusCode.OK, status)
             val body = bodyAsText()
-            assertContains(body, ""success"":true")
-            assertContains(body, ""total"":1")
+            assertContains(body, "\"success\":true")
+            assertContains(body, "\"total\":1")
         }
     }
 
     @Test
     fun `transactions recent endpoint returns data`() = testApplication {
-        val tx = Transaction(id = 2, bankCode = "TEST", content = "recent", amount = 200.0, date = 2000L, status = TransactionStatus.PENDING)
+        val tx = Transaction(id = 2, bankCode = "TEST", bankName = "Test", accountNumber = "0001", content = "recent", amount = 200.0, rawMessage = "recent|200000||Test|", transactionDate = 2000L, status = TransactionStatus.PENDING)
         `when`(dbHelper.getRecentTransactions(20, 0)).thenReturn(listOf(tx))
 
         configureApp()
         client.get("/api/v1/transactions/recent").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertContains(bodyAsText(), ""success"":true")
+            assertContains(bodyAsText(), "\"success\":true")
         }
     }
 
@@ -109,7 +109,7 @@ class ApiRoutesTest {
         configureApp()
         client.get("/api/v1/transactions/unread").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertContains(bodyAsText(), ""count"":5")
+            assertContains(bodyAsText(), "\"count\":5")
         }
     }
 
@@ -123,21 +123,21 @@ class ApiRoutesTest {
         client.get("/api/v1/transactions/stats").apply {
             assertEquals(HttpStatusCode.OK, status)
             val body = bodyAsText()
-            assertContains(body, ""total_transactions"":100")
-            assertContains(body, ""total_amount"":9999.99")
-            assertContains(body, ""unread_count"":10")
+            assertContains(body, "\"total_transactions\":100")
+            assertContains(body, "\"total_amount\":9999.99")
+            assertContains(body, "\"unread_count\":10")
         }
     }
 
     @Test
     fun `transactions by id returns single transaction`() = testApplication {
-        val tx = Transaction(id = 42, bankCode = "TEST", content = "single", amount = 500.0, date = 3000L, status = TransactionStatus.PENDING)
+        val tx = Transaction(id = 42, bankCode = "TEST", bankName = "Test", accountNumber = "0001", content = "single", amount = 500.0, rawMessage = "single|500000||Test|", transactionDate = 3000L, status = TransactionStatus.PENDING)
         `when`(dbHelper.getTransaction(42)).thenReturn(tx)
 
         configureApp()
         client.get("/api/v1/transactions/42").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertContains(bodyAsText(), ""id"":42")
+            assertContains(bodyAsText(), "\"id\":42")
         }
     }
 
@@ -161,13 +161,13 @@ class ApiRoutesTest {
 
     @Test
     fun `confirm transaction returns 200`() = testApplication {
-        val tx = Transaction(id = 1, bankCode = "TEST", content = "x", amount = 1.0, date = 1L, status = TransactionStatus.PENDING)
+        val tx = Transaction(id = 1, bankCode = "TEST", bankName = "Test", accountNumber = "0001", content = "x", amount = 1.0, rawMessage = "x|10000||Test|", transactionDate = 1L, status = TransactionStatus.PENDING)
         `when`(dbHelper.getTransaction(1)).thenReturn(tx)
 
         configureApp()
         client.post("/api/v1/transactions/1/confirm").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertContains(bodyAsText(), ""message"":""Confirmed""")
+            assertContains(bodyAsText(), "\"message\":\"Confirmed\"")
         }
         verify(dbHelper).updateStatus(1, TransactionStatus.CONFIRMED)
     }
@@ -187,7 +187,7 @@ class ApiRoutesTest {
         configureApp()
         client.delete("/api/v1/transactions/42").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertContains(bodyAsText(), ""Deleted""")
+            assertContains(bodyAsText(), "\"Deleted\"")
         }
         verify(dbHelper).deleteTransaction(42)
     }
@@ -198,9 +198,9 @@ class ApiRoutesTest {
         client.get("/api/v1/webhook").apply {
             assertEquals(HttpStatusCode.OK, status)
             val body = bodyAsText()
-            assertContains(body, ""url"":""https://example.com/hook""")
-            assertContains(body, ""enabled"":true")
-            assertContains(body, ""retry_count"":3")
+            assertContains(body, "\"url\":\"https://example.com/hook\"")
+            assertContains(body, "\"enabled\":true")
+            assertContains(body, "\"retry_count\":3")
         }
     }
 
@@ -264,9 +264,9 @@ class ApiRoutesTest {
             response.apply {
                 assertEquals(HttpStatusCode.OK, status)
                 val body = bodyAsText()
-                assertContains(body, ""has_update"":false")
-                assertContains(body, ""current_version"":""1.0.0""")
-                assertContains(body, ""check_url"":""https://example.com/update""")
+                assertContains(body, "\"has_update\":false")
+                assertContains(body, "\"current_version\":\"1.0.0\"")
+                assertContains(body, "\"check_url\":\"https://example.com/update\"")
             }
         }
     }
@@ -277,8 +277,8 @@ class ApiRoutesTest {
         client.get("/api/v1/update/info").apply {
             assertEquals(HttpStatusCode.OK, status)
             val body = bodyAsText()
-            assertContains(body, ""check_url"":""https://example.com/update""")
-            assertContains(body, ""configured"":true")
+            assertContains(body, "\"check_url\":\"https://example.com/update\"")
+            assertContains(body, "\"configured\":true")
         }
     }
 
@@ -287,7 +287,7 @@ class ApiRoutesTest {
         configureApp()
         client.get("/api/v1/update/url").apply {
             assertEquals(HttpStatusCode.OK, status)
-            assertContains(bodyAsText(), ""url"":""https://example.com/update""")
+            assertContains(bodyAsText(), "\"url\":\"https://example.com/update\"")
         }
     }
 
@@ -309,9 +309,9 @@ class ApiRoutesTest {
         client.get("/api/v1/config").apply {
             assertEquals(HttpStatusCode.OK, status)
             val body = bodyAsText()
-            assertContains(body, ""server_port"":8765")
-            assertContains(body, ""webhook_url"":""https://example.com/hook""")
-            assertContains(body, ""update_url"":""https://example.com/update""")
+            assertContains(body, "\"server_port\":8765")
+            assertContains(body, "\"webhook_url\":\"https://example.com/hook\"")
+            assertContains(body, "\"update_url\":\"https://example.com/update\"")
         }
     }
 
