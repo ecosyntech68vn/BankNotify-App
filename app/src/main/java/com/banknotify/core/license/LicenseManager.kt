@@ -16,7 +16,7 @@ object LicenseManager {
     private const val KEY_ACTIVATED_EMAIL = "activated_email"
     private const val KEY_EXPIRY = "expiry"
 
-    private const val TRIAL_DAYS = 7
+    private const val TRIAL_DAYS = 14
     private const val TRIAL_KEY = "trial_start"
     private const val TRIAL_PREF = "trial"
 
