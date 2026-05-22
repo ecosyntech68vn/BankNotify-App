@@ -102,9 +102,18 @@
         <Button
             android:id="@+id/btn_grant"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="48dp"
             android:layout_marginTop="32dp"
             android:text="@string/onboarding_grant" />
+
+        <Button
+            android:id="@+id/btn_accessibility"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@android:color/transparent"
+            android:text="@string/accessibility_service_name"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <Button
             android:id="@+id/btn_skip"

@@ -3,6 +3,8 @@
     <string name="app_name">BankNotify</string>
     <string name="notification_listener_name">BankNotify - 银行监控</string>
     <string name="notification_listener_description">允许BankNotify读取银行应用的通知以进行支付验证</string>
+    <string name="accessibility_service_name">BankNotify - 无障碍</string>
+    <string name="accessibility_service_desc">允许 BankNotify 通过无障碍服务读取银行通知（适用于 MIUI/HyperOS）</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome">欢迎使用 BankNotify</string>

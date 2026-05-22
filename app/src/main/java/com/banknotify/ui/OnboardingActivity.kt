@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.banknotify.R
 import com.banknotify.databinding.ActivityOnboardingBinding
+import com.banknotify.service.listener.BankAccessibilityService
 import com.banknotify.service.listener.BankNotificationListener
 
 class OnboardingActivity : AppCompatActivity() {
@@ -34,6 +35,10 @@ class OnboardingActivity : AppCompatActivity() {
             BankNotificationListener.openNotificationListenerSettings(this)
         }
 
+        b.btnAccessibility.setOnClickListener {
+            BankAccessibilityService.openAccessibilitySettings()
+        }
+
         b.btnSkip.setOnClickListener {
             markDone(this)
             startActivity(android.content.Intent(this, MainActivity::class.java))
@@ -43,7 +48,8 @@ class OnboardingActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (BankNotificationListener.isNotificationListenerEnabled(this)) {
+        if (BankNotificationListener.isNotificationListenerEnabled(this) ||
+            BankAccessibilityService.isAccessibilityServiceEnabled()) {
             markDone(this)
             startActivity(android.content.Intent(this, MainActivity::class.java))
             finish()

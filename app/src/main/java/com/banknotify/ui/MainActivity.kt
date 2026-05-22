@@ -19,6 +19,7 @@ import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionStatus
 import com.banknotify.R
 import com.banknotify.databinding.ActivityMainBinding
+import com.banknotify.service.listener.BankAccessibilityService
 import com.banknotify.service.listener.BankNotificationListener
 import com.banknotify.service.server.ApiServerService
 import com.banknotify.ui.adapter.TransactionAdapter
@@ -63,12 +64,14 @@ class MainActivity : AppCompatActivity() {
         b.recyclerTransactions.adapter = adapter
 
         b.cardPermissions.setOnClickListener { openPermissionSettings() }
+        b.cardAccessibility.setOnClickListener { openAccessibilitySettings() }
         b.cardWebhook.setOnClickListener { startActivity(android.content.Intent(this, WebhookSettingsActivity::class.java)) }
         b.cardStats.setOnClickListener { startActivity(android.content.Intent(this, DashboardActivity::class.java)) }
         b.cardClear.setOnClickListener { showClearDialog() }
         b.cardUpdate.setOnClickListener { showUpdateDialog() }
 
-        setupSwitches()
+        setupNotificationSwitch()
+        setupAccessibilitySwitch()
         observeData()
         checkCrashes()
     }
@@ -146,7 +149,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupSwitches() {
+    private fun setupNotificationSwitch() {
         b.notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 if (!BankNotificationListener.isNotificationListenerEnabled(this)) {
@@ -157,15 +160,17 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.monitor_disabled_hint), Toast.LENGTH_LONG).show()
             }
         }
-        b.serverSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
-            val port = prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT)
+    }
+
+    private fun setupAccessibilitySwitch() {
+        b.accessibilitySwitch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                ApiServerService.start(this, port)
-                Toast.makeText(this, getString(R.string.server_running, port), Toast.LENGTH_SHORT).show()
+                if (!BankAccessibilityService.isAccessibilityServiceEnabled()) {
+                    BankAccessibilityService.openAccessibilitySettings()
+                    b.accessibilitySwitch.isChecked = false
+                }
             } else {
-                ApiServerService.stop(this)
-                Toast.makeText(this, getString(R.string.server_stopped), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Tắt trợ năng trong Cài đặt > Trợ năng", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -178,6 +183,15 @@ class MainActivity : AppCompatActivity() {
             if (enabled) androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_green_dark)
             else androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_red_dark)
         )
+
+        val accEnabled = BankAccessibilityService.isAccessibilityServiceEnabled()
+        b.accessibilitySwitch.isChecked = accEnabled
+        b.accessibilityStatusText.text = getString(if (accEnabled) R.string.accessibility_enabled else R.string.accessibility_disabled)
+        b.accessibilityStatusText.setTextColor(
+            if (accEnabled) androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_green_dark)
+            else androidx.core.content.ContextCompat.getColor(this, android.R.color.holo_red_dark)
+        )
+
         val prefs = getSharedPreferences(BankNotifyApp.PREF_SERVER, android.content.Context.MODE_PRIVATE)
         b.serverPortText.text = getString(R.string.server_port, prefs.getInt(BankNotifyApp.KEY_SERVER_PORT, BankNotifyApp.DEFAULT_PORT))
         b.serverSwitch.isChecked = ApiServerService.isRunning
@@ -249,6 +263,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun openPermissionSettings() {
         startActivity(android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+
+    private fun openAccessibilitySettings() {
+        BankAccessibilityService.openAccessibilitySettings()
     }
 
     private fun checkBiometric() {

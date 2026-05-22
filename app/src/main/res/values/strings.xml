@@ -3,6 +3,11 @@
     <string name="app_name">BankNotify</string>
     <string name="notification_listener_name">BankNotify - Giám sát ngân hàng</string>
     <string name="notification_listener_description">Cho phép BankNotify đọc thông báo từ ứng dụng ngân hàng để xác thực thanh toán</string>
+    <string name="accessibility_service_name">BankNotify - Trợ năng (MIUI/HyperOS)</string>
+    <string name="accessibility_service_desc">Cho phép BankNotify đọc thông báo ngân hàng qua Accessibility Service (dùng cho MIUI/HyperOS)</string>
+    <string name="accessibility_switch">Bật trợ năng đọc thông báo</string>
+    <string name="accessibility_enabled">Đã bật trợ năng</string>
+    <string name="accessibility_disabled">Chưa bật trợ năng</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome">Chào mừng đến với BankNotify</string>

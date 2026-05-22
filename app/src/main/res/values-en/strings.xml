@@ -3,6 +3,8 @@
     <string name="app_name">BankNotify</string>
     <string name="notification_listener_name">BankNotify - Bank Monitor</string>
     <string name="notification_listener_description">Allow BankNotify to read notifications from banking apps for payment verification</string>
+    <string name="accessibility_service_name">BankNotify - Accessibility</string>
+    <string name="accessibility_service_desc">Allow BankNotify to read banking notifications via Accessibility Service (for MIUI/HyperOS)</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome">Welcome to BankNotify</string>
