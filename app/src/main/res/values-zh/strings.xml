@@ -133,4 +133,22 @@
     <string name="channel_server_desc">本地 API 服务器的通知</string>
     <string name="channel_transaction_name">交易</string>
     <string name="channel_transaction_desc">新交易的通知</string>
+
+    <!-- License -->
+    <string name="menu_license">激活许可证</string>
+    <string name="menu_about">关于</string>
+    <string name="license_hint">输入许可证密钥</string>
+    <string name="license_prompt">请输入您购买的许可证密钥以激活全部功能。</string>
+    <string name="license_activated_title">已激活</string>
+    <string name="license_activated_message">许可证已为 %s 激活</string>
+    <string name="license_success">激活成功！感谢您。</string>
+    <string name="license_error_format">许可证密钥格式无效</string>
+    <string name="license_error_signature">许可证密钥无效</string>
+    <string name="license_error_expired">许可证密钥已过期</string>
+    <string name="license_trial_days">剩余 %d 天试用</string>
+    <string name="license_expired_title">试用已过期</string>
+    <string name="license_expired_message">试用已结束。请购买许可证以继续使用。</string>
+    <string name="license_deactivated">已停用</string>
+    <string name="btn_activate">激活</string>
+    <string name="btn_deactivate">停用</string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banknotify.core.AppConfig
 import com.banknotify.core.BankNotifyApp
+import com.banknotify.core.license.LicenseManager
 import com.banknotify.core.model.Transaction
 import com.banknotify.core.model.TransactionStatus
 import com.banknotify.R
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
+        checkLicense()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         b = ActivityMainBinding.inflate(layoutInflater)
@@ -107,6 +109,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             com.banknotify.R.id.action_about -> { showAbout(); true }
             com.banknotify.R.id.action_api_docs -> { showApiDocs(); true }
+            com.banknotify.R.id.action_license -> { showLicenseActivationDialog(); true }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -244,6 +247,73 @@ class MainActivity : AppCompatActivity() {
 
     private fun openPermissionSettings() {
         startActivity(android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+
+    private fun checkLicense() {
+        if (LicenseManager.isLicensed(this)) return
+        LicenseManager.startTrial(this)
+        if (LicenseManager.isTrialExpired(this)) {
+            showLicenseExpiredDialog()
+        } else {
+            showTrialBanner()
+        }
+    }
+
+    private fun showTrialBanner() {
+        val days = LicenseManager.getTrialDaysLeft(this)
+        com.google.android.material.snackbar.Snackbar.make(b.root,
+            getString(R.string.license_trial_days, days),
+            com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE)
+            .setAction(getString(R.string.menu_license)) { showLicenseActivationDialog() }
+            .show()
+    }
+
+    private fun showLicenseExpiredDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.license_expired_title))
+            .setMessage(getString(R.string.license_expired_message))
+            .setPositiveButton(getString(R.string.menu_license)) { _, _ -> showLicenseActivationDialog() }
+            .setNegativeButton(getString(R.string.btn_dismiss)) { _, _ -> finish() }
+            .setCancelable(false).show()
+    }
+
+    private fun showLicenseActivationDialog() {
+        val isLicensed = LicenseManager.isLicensed(this)
+        val email = LicenseManager.getLicensedEmail(this)
+
+        if (isLicensed) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.license_activated_title))
+                .setMessage(getString(R.string.license_activated_message, email))
+                .setPositiveButton(getString(R.string.btn_ok), null)
+                .setNeutralButton(getString(R.string.btn_deactivate)) { _, _ ->
+                    LicenseManager.deactivate(this)
+                    Toast.makeText(this, getString(R.string.license_deactivated), Toast.LENGTH_SHORT).show()
+                }.show()
+            return
+        }
+
+        val input = android.widget.EditText(this).apply {
+            hint = getString(R.string.license_hint)
+            inputType = android.text.InputType.TYPE_CLASS_TEXT
+        }
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.menu_license))
+            .setMessage(getString(R.string.license_prompt))
+            .setView(input)
+            .setPositiveButton(getString(R.string.btn_activate)) { _, _ ->
+                val key = input.text.toString().trim()
+                if (key.isBlank()) return@setPositiveButton
+                val result = LicenseManager.activate(this, key)
+                val msg = when (result) {
+                    is LicenseManager.LicenseResult.OK -> getString(R.string.license_success)
+                    is LicenseManager.LicenseResult.INVALID_FORMAT -> getString(R.string.license_error_format)
+                    is LicenseManager.LicenseResult.INVALID_SIGNATURE -> getString(R.string.license_error_signature)
+                    is LicenseManager.LicenseResult.EXPIRED -> getString(R.string.license_error_expired)
+                }
+                Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+            }
+            .setNegativeButton(getString(R.string.btn_cancel), null).show()
     }
 
     private data class StatsData(

@@ -45,4 +45,12 @@ object SecurePrefs {
     fun setInt(context: Context, prefsName: String, key: String, value: Int) {
         prefs(context, prefsName).edit().putInt(key, value).apply()
     }
+
+    fun getLong(context: Context, prefsName: String, key: String, default: Long = 0L): Long {
+        return prefs(context, prefsName).getLong(key, default)
+    }
+
+    fun setLong(context: Context, prefsName: String, key: String, value: Long) {
+        prefs(context, prefsName).edit().putLong(key, value).apply()
+    }
 }

@@ -2,11 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_license"
+        android:title="@string/menu_license"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_api_docs"
-        android:title="API Docs"
+        android:title="@string/api_docs_title"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_about"
-        android:title="Giới thiệu"
+        android:title="@string/menu_about"
         app:showAsAction="never" />
 </menu>

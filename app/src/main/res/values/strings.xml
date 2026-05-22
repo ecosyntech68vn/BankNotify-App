@@ -137,4 +137,22 @@
     <string name="channel_server_desc">Thông báo cho máy chủ API local</string>
     <string name="channel_transaction_name">Giao dịch</string>
     <string name="channel_transaction_desc">Thông báo khi có giao dịch mới</string>
+
+    <!-- License -->
+    <string name="menu_license">Kích hoạt bản quyền</string>
+    <string name="menu_about">Giới thiệu</string>
+    <string name="license_hint">Nhập license key</string>
+    <string name="license_prompt">Vui lòng nhập license key bạn đã mua để kích hoạt toàn bộ tính năng.</string>
+    <string name="license_activated_title">Đã kích hoạt</string>
+    <string name="license_activated_message">Bản quyền đã được kích hoạt cho %s</string>
+    <string name="license_success">Kích hoạt thành công! Cảm ơn bạn.</string>
+    <string name="license_error_format">License key không đúng định dạng</string>
+    <string name="license_error_signature">License key không hợp lệ</string>
+    <string name="license_error_expired">License key đã hết hạn</string>
+    <string name="license_trial_days">Còn %d ngày dùng thử</string>
+    <string name="license_expired_title">Hết hạn dùng thử</string>
+    <string name="license_expired_message">Bản dùng thử đã hết hạn. Vui lòng mua license để tiếp tục sử dụng.</string>
+    <string name="license_deactivated">Đã huỷ kích hoạt</string>
+    <string name="btn_activate">Kích hoạt</string>
+    <string name="btn_deactivate">Huỷ kích hoạt</string>
 </resources>

@@ -133,4 +133,22 @@
     <string name="channel_server_desc">Notifications for the local API server</string>
     <string name="channel_transaction_name">Transaction</string>
     <string name="channel_transaction_desc">Notifications for new transactions</string>
+
+    <!-- License -->
+    <string name="menu_license">Activate License</string>
+    <string name="menu_about">About</string>
+    <string name="license_hint">Enter license key</string>
+    <string name="license_prompt">Please enter your license key to activate all features.</string>
+    <string name="license_activated_title">Activated</string>
+    <string name="license_activated_message">License activated for %s</string>
+    <string name="license_success">Activation successful! Thank you.</string>
+    <string name="license_error_format">Invalid license key format</string>
+    <string name="license_error_signature">Invalid license key</string>
+    <string name="license_error_expired">License key has expired</string>
+    <string name="license_trial_days">%d trial days remaining</string>
+    <string name="license_expired_title">Trial Expired</string>
+    <string name="license_expired_message">Your trial has ended. Please purchase a license to continue using.</string>
+    <string name="license_deactivated">Deactivated</string>
+    <string name="btn_activate">Activate</string>
+    <string name="btn_deactivate">Deactivate</string>
 </resources>
