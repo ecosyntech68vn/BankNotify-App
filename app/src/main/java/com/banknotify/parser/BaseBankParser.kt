@@ -39,17 +39,17 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
     }
 
     private fun extractAccount(t: String): String? {
-        val p = Regex("""tài[_\s]?khoản[:\s]*(\d{6,20})""", RegexOption.IGNORE_CASE)
+        val p = Regex("""t[aà]i[_\s]?kho[aả]n[:\s]*(\d{6,20})""", RegexOption.IGNORE_CASE)
         return p.find(t)?.groupValues?.get(1)
     }
 
     private fun extractContent(t: String): String? {
-        val p = Regex("""nội[_\s]?dung[:\s]*([^\n]{1,200})""", RegexOption.IGNORE_CASE)
+        val p = Regex("""n[oô]i[_\s]?dung[:\s]*([^\n]{1,200})""", RegexOption.IGNORE_CASE)
         return p.find(t)?.groupValues?.get(1)?.trim()
     }
 
     private fun extractSender(t: String): String? {
-        val p = Regex("""([A-ZÀ-Ỹ][A-ZÀ-Ỹa-zà-ỹ]+(?:\s+[A-ZÀ-Ỹ][A-ZÀ-Ỹa-zà-ỹ]+){1,5})\s*(?:chuyển|ck|thanh toán)""", RegexOption.IGNORE_CASE)
+        val p = Regex("""(\p{Lu}+(?:\s+\p{Lu}+){1,5})\s*(?:chuyển|chuyen|ck|thanh toán|thanh toan)""", RegexOption.IGNORE_CASE)
         return p.find(t)?.groupValues?.get(1)
     }
 
@@ -59,7 +59,7 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
     }
 
     private fun extractReference(t: String): String? {
-        val p = Regex("""(?:GD|giao dịch|MGD)[:\s]*([A-Z0-9]{6,20})""", RegexOption.IGNORE_CASE)
+        val p = Regex("""(?:GD|giao dịch|giao dich|MGD)[:\s]*([A-Z0-9]{6,20})""", RegexOption.IGNORE_CASE)
         return p.find(t)?.groupValues?.get(1)
     }
 
@@ -74,6 +74,8 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
         return System.currentTimeMillis()
     }
 
-    private fun parseAmount(s: String): Double? =
-        s.replace(Regex("[^\\d.,]"), "").replace(",", "").toDoubleOrNull()
+    private fun parseAmount(s: String): Double? {
+        val sign = if (s.trimStart().startsWith('-')) -1.0 else 1.0
+        return s.replace(Regex("[^\\d.,]"), "").replace(",", "").toDoubleOrNull()?.let { it * sign }
+    }
 }
