@@ -36,7 +36,8 @@ object DataExporter {
             }
             appendLine("]")
         }
-        val file = File(context.cacheDir, "transactions_export.json")
+        val dir = File(context.cacheDir, "exports").apply { mkdirs() }
+        val file = File(dir, "transactions_export.json")
         file.writeText(json, Charsets.UTF_8)
         return file
     }
@@ -49,7 +50,8 @@ object DataExporter {
                 appendLine("${tx.id},${csvEscape(tx.bankCode)},${csvEscape(tx.bankName)},${csvEscape(tx.accountNumber)},${tx.amount},${tx.balance ?: ""},${csvEscape(tx.content)},${csvEscape(tx.senderName ?: "")},${csvEscape(tx.senderAccount ?: "")},${csvEscape(tx.referenceNumber ?: "")},${dateFmt.format(Date(tx.transactionDate))},${tx.status.name}")
             }
         }
-        val file = File(context.cacheDir, "transactions_export.csv")
+        val dir = File(context.cacheDir, "exports").apply { mkdirs() }
+        val file = File(dir, "transactions_export.csv")
         file.writeText(csv, Charsets.UTF_8)
         return file
     }
