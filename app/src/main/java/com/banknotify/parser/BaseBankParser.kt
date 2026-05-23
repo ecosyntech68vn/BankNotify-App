@@ -76,7 +76,26 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
     }
 
     private fun parseAmount(s: String): Double? {
-        val sign = if (s.trimStart().startsWith('-')) -1.0 else 1.0
-        return s.replace(Regex("[^\\d]"), "").toDoubleOrNull()?.let { it * sign }
+        val trimmed = s.trim()
+        val sign = if (trimmed.startsWith('-')) -1.0 else 1.0
+        val num = trimmed.replace(Regex("[^\\d.,]"), "")
+        if (num.isEmpty()) return null
+        val lastDot = num.lastIndexOf('.')
+        val lastComma = num.lastIndexOf(',')
+        val normalized = when {
+            lastDot >= 0 && lastComma >= 0 ->
+                if (lastDot > lastComma) num.replace(",", "")
+                else num.replace(".", "").replace(",", ".")
+            lastDot >= 0 -> {
+                val parts = num.split(".")
+                if (parts.size > 2 || parts.last().length == 3) num.replace(".", "") else num
+            }
+            lastComma >= 0 -> {
+                val parts = num.split(",")
+                if (parts.size > 2 || parts.last().length == 3) num.replace(",", "") else num.replace(",", ".")
+            }
+            else -> num
+        }
+        return normalized.toDoubleOrNull()?.let { it * sign }
     }
 }
