@@ -5,6 +5,9 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -57,6 +60,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(b.root)
         setSupportActionBar(b.toolbar)
         supportActionBar?.title = getString(R.string.app_name)
+
+        // Edge-to-edge (targetSdk 35): chừa padding bottom = chiều cao thanh điều hướng
+        val basePaddingBottom = (16 * resources.displayMetrics.density).toInt()
+        ViewCompat.setOnApplyWindowInsetsListener(b.scrollContent) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = basePaddingBottom + bars.bottom)
+            insets
+        }
 
         adapter = TransactionAdapter { tx -> showDetail(tx) }
         b.recyclerTransactions.layoutManager = LinearLayoutManager(this)
