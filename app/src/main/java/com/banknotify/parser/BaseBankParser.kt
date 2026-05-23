@@ -35,7 +35,7 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
     }
 
     private fun extractAmount(t: String): Double? {
-        val p = Regex("""([+-]?[\d,]+(?:\.\d+)?)\s*(?:VND|đ)""", RegexOption.IGNORE_CASE)
+        val p = Regex("""([+-]?[\d.,]+)\s*(?:VN[DĐ]|đ|₫)""", RegexOption.IGNORE_CASE)
         return p.find(t)?.let { parseAmount(it.groupValues[1]) }
     }
 
@@ -55,7 +55,7 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
     }
 
     private fun extractBalance(t: String): Double? {
-        val p = Regex("""(?:SD|số dư|so du|số dư|vi?́)[:\s]*([+-]?[\d,]+(?:\.\d+)?)\s*(?:VND|đ)""", RegexOption.IGNORE_CASE)
+        val p = Regex("""(?:SD|số dư|so du|số dư|vi?́)[:\s]*([+-]?[\d.,]+)\s*(?:VN[DĐ]|đ|₫)""", RegexOption.IGNORE_CASE)
         return p.find(t)?.let { parseAmount(it.groupValues[1]) }
     }
 
@@ -77,6 +77,6 @@ class BaseBankParser(private val config: BankParserConfig) : BankParser {
 
     private fun parseAmount(s: String): Double? {
         val sign = if (s.trimStart().startsWith('-')) -1.0 else 1.0
-        return s.replace(Regex("[^\\d.,]"), "").replace(",", "").toDoubleOrNull()?.let { it * sign }
+        return s.replace(Regex("[^\\d]"), "").toDoubleOrNull()?.let { it * sign }
     }
 }
