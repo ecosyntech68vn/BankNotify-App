@@ -71,10 +71,10 @@ dependencies {
     implementation("io.ktor:ktor-serialization-gson:3.0.3")
     implementation("com.google.code.gson:gson:2.11.0")
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    implementation("androidx.room:room-paging:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    implementation("androidx.room:room-paging:2.8.4")
+    kapt("androidx.room:room-compiler:2.8.4")
 
     implementation("com.google.dagger:hilt-android:2.50")
     kapt("com.google.dagger:hilt-android-compiler:2.50")
