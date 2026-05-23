@@ -95,7 +95,7 @@ dependencies {
     // implementation("com.google.firebase:firebase-crashlytics-ktx")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.11.1")
+    testImplementation("org.robolectric:robolectric:4.16.1")
     testImplementation("com.google.truth:truth:1.4.2")
     testImplementation("io.ktor:ktor-server-test-host:3.0.3")
     testImplementation("io.ktor:ktor-client-cio:3.0.3")
