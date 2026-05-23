@@ -99,7 +99,7 @@ dependencies {
     testImplementation("com.google.truth:truth:1.4.2")
     testImplementation("io.ktor:ktor-server-test-host:3.0.3")
     testImplementation("io.ktor:ktor-client-cio:3.0.3")
-    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:core:1.7.0")
     testImplementation("androidx.test:runner:1.5.2")
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
